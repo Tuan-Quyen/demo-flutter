@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Container(
                 padding: const EdgeInsets.only(top: 150),
-                child: Image.asset('images/flutter-icon.png',
+                child: Image.asset('lib/images/flutter-icon.png',
                     width: 100, height: 100),
               ),
               Container(

@@ -21,7 +21,7 @@ class CustomAppBar extends AppBar {
                     margin: const EdgeInsets.only(right: 10),
                     child: IconButton(
                       icon: Image.asset(
-                        'images/butterfly-icon.png',
+                        'lib/images/flutter-icon.png',
                         width: 40,
                         height: 40,
                       ),
