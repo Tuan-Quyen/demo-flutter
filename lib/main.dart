@@ -1,41 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app/SecondPage.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
+    runApp(MyApp());
+  });
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: MyHomePage(),
+        routes: <String, WidgetBuilder>{
+          '/SecondPage': (BuildContext context) => SecondPage(),
+        });
   }
 }
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -46,28 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.lightBlue[50],
-      /*appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.red[700],
-        leading: IconButton(icon: Icon(Icons.list, size: 40), onPressed: () {}),
-        title: Text(
-          "Flutter",
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              icon: Image.asset(
-                'images/butterfly-icon.png',
-                width: 40,
-                height: 40,
-              ),
-              onPressed: () {},
-            ),
-          ),
-        ],
-      ),*/
       body: new GestureDetector(
         onTap: () {
           FocusScope.of(context).detach();
@@ -151,7 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     splashColor: Colors.blueGrey,
                     textColor: Colors.lightBlue,
                     color: Colors.white,
-                    onPressed: () {}),
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(context, '/SecondPage');
+                    }),
               ),
             ],
           ),
