@@ -27,14 +27,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  english_words: ^3.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -42,8 +41,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/a_dot_burr.jpeg
-    - images/a_dot_ham.jpeg
+  - images/butterfly-icon.png
+  - images/flutter-icon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

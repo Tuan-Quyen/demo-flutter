@@ -39,78 +39,124 @@ class MyHomePage extends StatefulWidget {
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
-
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
+      backgroundColor: Colors.lightBlue[50],
+      /*appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.red[700],
-        leading: IconButton(icon: Icon(Icons.list,size: 40), onPressed: (){}),
-        title: Text("Flutter",
+        leading: IconButton(icon: Icon(Icons.list, size: 40), onPressed: () {}),
+        title: Text(
+          "Flutter",
           style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[
-
+          Container(
+            margin: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              icon: Image.asset(
+                'images/butterfly-icon.png',
+                width: 40,
+                height: 40,
+              ),
+              onPressed: () {},
+            ),
+          ),
         ],
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
+      ),*/
+      body: new GestureDetector(
+        onTap: () {
+          FocusScope.of(context).detach();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.only(top: 150),
+                child: Image.asset('images/flutter-icon.png',
+                    width: 100, height: 100),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 30),
+                child: Text(
+                  "Flutter",
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      shadows: <Shadow>[
+                        Shadow(
+                          offset: Offset(2.0, 2.0),
+                          blurRadius: 3.0,
+                          color: Colors.lightBlue[300],
+                        )
+                      ]),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+                child: Container(
+                  color: Colors.white,
+                  child: TextField(
+                    maxLines: 1,
+                    decoration: new InputDecoration(
+                        isDense: true,
+                        labelText: "Email",
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.red, width: 2)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.lightBlue, width: 2))),
+                    obscureText: false,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                child: Container(
+                  color: Colors.white,
+                  child: TextField(
+                    maxLines: 1,
+                    decoration: new InputDecoration(
+                        isDense: true,
+                        labelText: "Password",
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.red, width: 2)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.lightBlue, width: 2))),
+                    obscureText: true,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
+                constraints: BoxConstraints.expand(height: 50),
+                child: RaisedButton(
+                    child: const Text(
+                      "Sign in",
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    splashColor: Colors.blueGrey,
+                    textColor: Colors.lightBlue,
+                    color: Colors.white,
+                    onPressed: () {}),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
