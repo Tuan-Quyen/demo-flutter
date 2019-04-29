@@ -44,6 +44,10 @@ flutter:
   assets:
   - lib/images/butterfly-icon.png
   - lib/images/flutter-icon.png
+  - lib/images/ic_vote.png
+  - lib/images/ic_answers_non_zero.png
+  - lib/images/ic_no_answers.png
+  - lib/images/ic_answers_accepted.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
