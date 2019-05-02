@@ -17,6 +17,11 @@ class ResponseQuestion {
       this.questionId,
       this.topicTag});
 
+  static List<String> parseTags(tagsJson) {
+    List<String> parseTags = new List<String>.from(tagsJson);
+    return parseTags;
+  }
+
   factory ResponseQuestion.fromJson(Map<String, dynamic> json) {
     return ResponseQuestion(
         topicName: json['title'],
@@ -24,7 +29,7 @@ class ResponseQuestion {
         topicScore: json['score'],
         topicAnswer: json['answer_count'],
         questionId: json['question_id'],
-        topicTag: json['tags']
+        topicTag: parseTags(json['tags'])
     );
   }
 }

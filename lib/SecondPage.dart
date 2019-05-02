@@ -76,6 +76,7 @@ class _MySecondPageState extends State<SecondPage> {
                 title: _questionList[position].topicName,
                 questionId: _questionList[position].questionId.toString(),
                 tags: _questionList[position].topicTag,
+                context: context,
               )),
             ],
           ),
@@ -122,7 +123,12 @@ class _MySecondPageState extends State<SecondPage> {
 }
 
 class QuestionView extends Container {
-  QuestionView({Key key, String title, List<String> tags,String questionId, BuildContext context})
+  QuestionView(
+      {Key key,
+      String title,
+      List<String> tags,
+      String questionId,
+      BuildContext context})
       : super(
           key: key,
           constraints: const BoxConstraints(minHeight: 100),
@@ -130,6 +136,7 @@ class QuestionView extends Container {
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.all(10),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Padding(
@@ -141,16 +148,15 @@ class QuestionView extends Container {
                           fontSize: 20,
                           color: Color.fromARGB(255, 50, 110, 181)),
                     )),
-                Row(
-                  children: <Widget>[
-                    Text("Tags :",style: TextStyle(fontSize: 14),),
-                    ListView.builder(
-                        itemCount: tags.length,
-                        shrinkWrap: true,
-                        itemBuilder: (context, position) {
-                          return Text(tags[position],style: TextStyle(fontSize: 14),);
-                        })
-                  ],
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      Text(
+                        "Tags :",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
