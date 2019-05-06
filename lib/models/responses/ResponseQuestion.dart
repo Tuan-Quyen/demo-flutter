@@ -8,6 +8,7 @@ class ResponseQuestion {
   int topicAnswer;
   List<String> topicTag;
   int questionId;
+  int lastActivityDate;
 
   ResponseQuestion(
       {this.topicName,
@@ -15,7 +16,8 @@ class ResponseQuestion {
       this.topicScore,
       this.topicAnswer,
       this.questionId,
-      this.topicTag});
+      this.topicTag,
+      this.lastActivityDate});
 
   static List<String> parseTags(tagsJson) {
     List<String> parseTags = new List<String>.from(tagsJson);
@@ -29,7 +31,8 @@ class ResponseQuestion {
         topicScore: json['score'],
         topicAnswer: json['answer_count'],
         questionId: json['question_id'],
-        topicTag: parseTags(json['tags'])
+        topicTag: parseTags(json['tags']),
+        lastActivityDate: json['last_activity_date']
     );
   }
 }
