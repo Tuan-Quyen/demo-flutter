@@ -19,32 +19,41 @@ class _MySecondPageState extends State<SecondPage> {
   int _page = 1;
   List<ResponseQuestion> _questionList = new List();
   var _scrollController = new ScrollController();
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
     super.initState();
-    getQuestionData(_page);
+    getQuestionData(false);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         setState(() {
           _page++;
-          getQuestionData(_page);
+          getQuestionData(false);
         });
       }
     });
   }
 
-  getQuestionData(int page) async {
+  Future<Null> refreshList() async {
+    refreshKey.currentState?.show(atTop: false);
+    await getQuestionData(true);
+    return null;
+  }
+
+  getQuestionData(bool isRefresh) async {
     setState(() {
       isLoading = true;
     });
+    if (isRefresh) _page = 1;
     String link =
-        "https://api.stackexchange.com/2.2/questions?page=$page&pagesize=15&order=desc&sort=creation&site=stackoverflow&key=mq*Z3A9J)zXCIsTkyU9TQA((";
+        "https://api.stackexchange.com/2.2/questions?page=$_page&pagesize=15&order=desc&sort=votes&site=stackoverflow&key=mq*Z3A9J)zXCIsTkyU9TQA((";
     final res = await http.get(link);
     if (res.statusCode == 200) {
       var rest = json.decode(res.body)["items"] as List;
       setState(() {
+        if (isRefresh) _questionList.clear();
         isLoading = false;
         isFirstLoad = false;
         _questionList.addAll(rest
@@ -109,27 +118,29 @@ class _MySecondPageState extends State<SecondPage> {
             style: TextStyle(color: Colors.white, fontSize: 23),
           ),
           hasLeft: true,
-          hasRight: false,
+          hasRight: true,
         ),
         drawer: _drawer(),
         body: Container(
             child: isFirstLoad
                 ? LoadingProgress(isLoading: isFirstLoad)
-                : ListView.separated(
-                    controller: _scrollController,
-                    separatorBuilder: (context, int index) => Divider(
-                          height: 1,
-                          color: Colors.black26,
-                        ),
-                    shrinkWrap: true,
-                    itemCount: _questionList.length + 1,
-                    itemBuilder: (context, position) {
-                      if (position == _questionList.length && position != 0) {
-                        return LoadingProgress(isLoading: isLoading);
-                      } else if (position < _questionList.length) {
-                        return _gestureDetector(position);
-                      }
-                    },
-                  )));
+                : RefreshIndicator(
+                    child: ListView.separated(
+                      controller: _scrollController,
+                      separatorBuilder: (context, int index) => Divider(
+                            height: 1,
+                            color: Colors.black26,
+                          ),
+                      shrinkWrap: true,
+                      itemCount: _questionList.length + 1,
+                      itemBuilder: (context, position) {
+                        if (position == _questionList.length && position != 0) {
+                          return LoadingProgress(isLoading: isLoading);
+                        } else if (position < _questionList.length) {
+                          return _gestureDetector(position);
+                        }
+                      },
+                    ),
+                    onRefresh: refreshList)));
   }
 }

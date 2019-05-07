@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ScoreAnsweredView extends Container {
   static Image _voteImage(int answered, bool isAnswered) {
@@ -41,6 +42,41 @@ class ScoreAnsweredView extends Container {
     }
   }
 
+  static Text _textScore(bool isAnswered, int score) {
+    if (score >= 1000) {
+      int numberTemp = score % 1000;
+      numberTemp = int.parse(
+          new NumberFormat('', "en_US").format((numberTemp / 100)));
+      score = int.parse(
+          new NumberFormat('', "en_US").format((score / 1000)));
+      if (numberTemp == 0) {
+        return Text(
+          score.toString() + "k",
+          style: TextStyle(
+              color: _voteColorNumber(isAnswered),
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        );
+      } else {
+        return Text(
+          score.toString() + "." + numberTemp.toString() + "k",
+          style: TextStyle(
+              color: _voteColorNumber(isAnswered),
+              fontSize: 16,
+              fontWeight: FontWeight.bold),
+        );
+      }
+    } else {
+      return Text(
+        score.toString(),
+        style: TextStyle(
+            color: _voteColorNumber(isAnswered),
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
+      );
+    }
+  }
+
   ScoreAnsweredView({Key key, int score, int answered, bool isAnswered})
       : super(
           key: key,
@@ -53,22 +89,10 @@ class ScoreAnsweredView extends Container {
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    score.toString(),
-                    style: TextStyle(
-                        color: _voteColorNumber(isAnswered),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20),
-                  ),
+                  _textScore(isAnswered, score),
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: Text(
-                      answered.toString(),
-                      style: TextStyle(
-                          color: _voteColorNumber(isAnswered),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
-                    ),
+                    child: _textScore(isAnswered, answered)
                   )
                 ],
               ),

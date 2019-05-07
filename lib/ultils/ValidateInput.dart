@@ -5,10 +5,11 @@ class ValidateInput{
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value))
-      return 'Enter Valid Email';
-    else if(checkEmpty(value))
+
+    if(checkEmpty(value))
       return 'Email is Empty';
+    else if (!regex.hasMatch(value))
+      return 'Enter Valid Email';
     else
       return null;
   }
@@ -25,6 +26,14 @@ class ValidateInput{
 
   static bool checkEmpty(String value){
     if(value.length == 0){
+      return true;
+    }else{
+      return false;
+    }
+  }
+
+  static bool checkFinalValidate(String email,String pass){
+    if(validateEmail(email) == null && validatePassWord(pass) == null ){
       return true;
     }else{
       return false;

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/widgets/CustomTextFieldLogin.dart';
+import 'ultils/ValidateInput.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
@@ -8,6 +10,17 @@ class LoginPage extends StatefulWidget {
 }
 
 class _MyLoginPageState extends State<LoginPage> {
+  final _tfEmailController = TextEditingController();
+  final _tfPassController = TextEditingController();
+  String _errorTextEmail, _errorTextPass;
+
+  @override
+  void dispose() {
+    _tfEmailController.dispose();
+    _tfPassController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,46 +56,21 @@ class _MyLoginPageState extends State<LoginPage> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
-                child: Container(
-                  color: Colors.white,
-                  child: TextField(
-                    maxLines: 1,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: new InputDecoration(
-                        isDense: true,
-                        labelText: "Email",
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.red, width: 2)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.lightBlue, width: 2))),
-                    obscureText: false,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
+                  padding: const EdgeInsets.only(top: 30, left: 20, right: 20),
+                  child: TextFieldLogin(
+                    isObscure: false,
+                    controller: _tfEmailController,
+                    errorText: _errorTextEmail,
+                    labelText: "Email",
+                  )),
               Container(
-                padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-                child: Container(
-                  color: Colors.white,
-                  child: TextField(
-                    maxLines: 1,
-                    decoration: new InputDecoration(
-                        isDense: true,
-                        labelText: "Password",
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.red, width: 2)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.lightBlue, width: 2))),
-                    obscureText: true,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
+                  padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
+                  child: TextFieldLogin(
+                    isObscure: true,
+                    controller: _tfPassController,
+                    errorText: _errorTextPass,
+                    labelText: "Password",
+                  )),
               Container(
                 margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
                 constraints: BoxConstraints.expand(height: 50),
@@ -97,7 +85,18 @@ class _MyLoginPageState extends State<LoginPage> {
                     textColor: Colors.lightBlue,
                     color: Colors.white,
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/SecondPage');
+                      setState(() {
+                        if (ValidateInput.checkFinalValidate(
+                            _tfEmailController.text, _tfPassController.text)) {
+                          Navigator.pushReplacementNamed(
+                              context, '/SecondPage');
+                        } else {
+                          _errorTextEmail = ValidateInput.validateEmail(
+                              _tfEmailController.text);
+                          _errorTextPass = ValidateInput.validatePassWord(
+                              _tfPassController.text);
+                        }
+                      });
                     }),
               ),
             ],
