@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends AppBar {
-  CustomAppBar({Key key, Widget title, bool hasLeft, bool hasRight})
+  CustomAppBar(
+      {Key key,
+      BuildContext context,
+      Widget title,
+      Color color,
+      bool hasLeft,
+      bool hasRight,
+      String navigatorRoute})
       : super(
           key: key,
           title: title,
@@ -20,17 +27,19 @@ class CustomAppBar extends AppBar {
                   Container(
                     margin: const EdgeInsets.only(right: 10),
                     child: IconButton(
-                      icon: Image.asset(
-                        'lib/images/flutter-icon.png',
-                        width: 40,
-                        height: 40,
+                      icon: Icon(
+                        Icons.navigate_next,
+                        color: Colors.white,
+                        size: 30,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(context, '$navigatorRoute');
+                      },
                     ),
                   ),
                 ]
               : null,
           centerTitle: true,
-          backgroundColor: Colors.red[700],
+          backgroundColor: color,
         );
 }

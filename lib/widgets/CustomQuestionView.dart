@@ -42,7 +42,7 @@ class QuestionView extends Container {
       return (resultTime % 86400).toString() + " month agos";
     } else {
       return DateFormat('dd-MM-yyyy')
-          .format(DateTime.fromMillisecondsSinceEpoch(lastActivity));
+          .format(DateTime.fromMillisecondsSinceEpoch(lastActivityTime));
     }
   }
 

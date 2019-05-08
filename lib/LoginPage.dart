@@ -89,7 +89,7 @@ class _MyLoginPageState extends State<LoginPage> {
                         if (ValidateInput.checkFinalValidate(
                             _tfEmailController.text, _tfPassController.text)) {
                           Navigator.pushReplacementNamed(
-                              context, '/SecondPage');
+                              context, '/ImageLoadPage');
                         } else {
                           _errorTextEmail = ValidateInput.validateEmail(
                               _tfEmailController.text);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/QuestionPage.dart';
 import 'package:flutter_app/LoginPage.dart';
+import 'package:flutter_app/ImageLoadPage.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations(
@@ -18,10 +19,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: SecondPage(),
+        home: ImageLoadPage(),
         routes: <String, WidgetBuilder>{
           '/LoginPage': (BuildContext context) => LoginPage(),
-          '/SecondPage': (BuildContext context) => SecondPage()
+          '/QuestionPage': (BuildContext context) => SecondPage(),
+          '/ImageLoadPage': (BuildContext context) => ImageLoadPage()
         });
   }
 }

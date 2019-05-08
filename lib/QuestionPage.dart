@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/network/Url.dart';
 import 'package:flutter_app/widgets/CustomScoreAnswered.dart';
 import 'widgets/CustomAppBar.dart';
 import 'package:flutter_app/models/responses/ResponseQuestion.dart';
@@ -15,7 +16,7 @@ class SecondPage extends StatefulWidget {
 }
 
 class _MySecondPageState extends State<SecondPage> {
-  bool hasLeft = true, hasRight = false, isLoading = false, isFirstLoad = true;
+  bool hasLeft = false, hasRight = false, isLoading = false, isFirstLoad = true;
   int _page = 1;
   List<ResponseQuestion> _questionList = new List();
   var _scrollController = new ScrollController();
@@ -47,9 +48,7 @@ class _MySecondPageState extends State<SecondPage> {
       isLoading = true;
     });
     if (isRefresh) _page = 1;
-    String link =
-        "https://api.stackexchange.com/2.2/questions?page=$_page&pagesize=15&order=desc&sort=votes&site=stackoverflow&key=mq*Z3A9J)zXCIsTkyU9TQA((";
-    final res = await http.get(link);
+    final res = await http.get(BaseUrl.questionRequest(_page));
     if (res.statusCode == 200) {
       var rest = json.decode(res.body)["items"] as List;
       setState(() {
@@ -68,6 +67,10 @@ class _MySecondPageState extends State<SecondPage> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  @protected
+  @mustCallSuper
+  void deactivate() {}
 
   Drawer _drawer() {
     return new Drawer(
@@ -117,10 +120,11 @@ class _MySecondPageState extends State<SecondPage> {
             "Flutter",
             style: TextStyle(color: Colors.white, fontSize: 23),
           ),
-          hasLeft: true,
-          hasRight: true,
+          hasLeft: hasLeft,
+          hasRight: false,
+          color: Colors.red[700],
         ),
-        drawer: _drawer(),
+        drawer: hasLeft ? _drawer() : null,
         body: Container(
             child: isFirstLoad
                 ? LoadingProgress(isLoading: isFirstLoad)
