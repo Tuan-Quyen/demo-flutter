@@ -8,8 +8,21 @@ import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'dart:async';
 
-class ImageLoadPage extends StatelessWidget {
+class ImageLoadPage extends StatefulWidget {
+  @override
+  _ImageLoadPageState createState() => _ImageLoadPageState();
+}
+
+class _ImageLoadPageState extends State<ImageLoadPage> {
   List<ResponseUserImage> _imageList = new List();
+  Future<List<ResponseUserImage>> _future;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _future = getImage();
+  }
 
   Future<List<ResponseUserImage>> getImage() async {
     final res = await http.get(BaseUrl.userImage());
@@ -20,7 +33,6 @@ class ImageLoadPage extends StatelessWidget {
           .map<ResponseUserImage>((json) => ResponseUserImage.fromJson(json))
           .toList();
       _imageList.addAll(data);
-      return null;
     }
   }
 
@@ -62,7 +74,7 @@ class ImageLoadPage extends StatelessWidget {
       ),
       body: Container(
         child: FutureBuilder(
-            future: getImage(),
+            future: _future,
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:

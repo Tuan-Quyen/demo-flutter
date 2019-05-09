@@ -8,14 +8,14 @@ import 'widgets/CustomQuestionView.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class SecondPage extends StatefulWidget {
-  SecondPage({Key key}) : super(key: key);
+class QuestionPage extends StatefulWidget {
+  QuestionPage({Key key}) : super(key: key);
 
   @override
-  _MySecondPageState createState() => _MySecondPageState();
+  _MyQuestionPageState createState() => _MyQuestionPageState();
 }
 
-class _MySecondPageState extends State<SecondPage> {
+class _MyQuestionPageState extends State<QuestionPage> {
   bool hasLeft = false, hasRight = false, isLoading = false, isFirstLoad = true;
   int _page = 1;
   List<ResponseQuestion> _questionList = new List();
@@ -29,10 +29,12 @@ class _MySecondPageState extends State<SecondPage> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        setState(() {
-          _page++;
-          getQuestionData(false);
-        });
+        if(this.mounted) {
+          setState(() {
+            _page++;
+            getQuestionData(false);
+          });
+        }
       }
     });
   }
@@ -44,21 +46,25 @@ class _MySecondPageState extends State<SecondPage> {
   }
 
   getQuestionData(bool isRefresh) async {
-    setState(() {
-      isLoading = true;
-    });
+    if(this.mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
     if (isRefresh) _page = 1;
-    final res = await http.get(BaseUrl.questionRequest(_page));
+    final res = await http.get(BaseUrl.questionRequest(_page,"hot"));
     if (res.statusCode == 200) {
       var rest = json.decode(res.body)["items"] as List;
-      setState(() {
-        if (isRefresh) _questionList.clear();
-        isLoading = false;
-        isFirstLoad = false;
-        _questionList.addAll(rest
-            .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
-            .toList());
-      });
+      if(this.mounted) {
+        setState(() {
+          if (isRefresh) _questionList.clear();
+          isLoading = false;
+          isFirstLoad = false;
+          _questionList.addAll(rest
+              .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
+              .toList());
+        });
+      }
     }
   }
 
@@ -67,10 +73,6 @@ class _MySecondPageState extends State<SecondPage> {
     _scrollController.dispose();
     super.dispose();
   }
-
-  @protected
-  @mustCallSuper
-  void deactivate() {}
 
   Drawer _drawer() {
     return new Drawer(
@@ -121,7 +123,9 @@ class _MySecondPageState extends State<SecondPage> {
             style: TextStyle(color: Colors.white, fontSize: 23),
           ),
           hasLeft: hasLeft,
-          hasRight: false,
+          context: context,
+          navigatorRoute: "/AsynchorousPage",
+          hasRight: true,
           color: Colors.red[700],
         ),
         drawer: hasLeft ? _drawer() : null,

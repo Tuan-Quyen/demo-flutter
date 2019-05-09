@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/AsynchorousPage.dart';
 import 'package:flutter_app/QuestionPage.dart';
 import 'package:flutter_app/LoginPage.dart';
 import 'package:flutter_app/ImageLoadPage.dart';
@@ -19,11 +20,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ImageLoadPage(),
+        home: LoginPage(),
         routes: <String, WidgetBuilder>{
           '/LoginPage': (BuildContext context) => LoginPage(),
-          '/QuestionPage': (BuildContext context) => SecondPage(),
-          '/ImageLoadPage': (BuildContext context) => ImageLoadPage()
+          '/QuestionPage': (BuildContext context) => QuestionPage(),
+          '/ImageLoadPage': (BuildContext context) => ImageLoadPage(),
+          '/AsynchorousPage': (BuildContext context) => AsynchorousPage()
         });
   }
 }

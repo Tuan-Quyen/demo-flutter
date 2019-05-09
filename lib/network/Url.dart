@@ -2,9 +2,9 @@ class BaseUrl {
   static final String baseurl = "https://api.stackexchange.com/2.2/";
   static final String key = "&key=mq*Z3A9J)zXCIsTkyU9TQA((";
 
-  static String questionRequest(int page) {
+  static String questionRequest(int page,String sort) {
     return baseurl +
-        "questions?page=$page&pagesize=15&order=desc&sort=hot&site=stackoverflow" +
+        "questions?page=$page&pagesize=15&order=desc&sort=$sort&site=stackoverflow" +
         key;
   }
 

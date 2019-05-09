@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter_app/models/local/Owner.dart';
 
 @JsonSerializable()
 class ResponseQuestion {
@@ -6,9 +7,10 @@ class ResponseQuestion {
   bool hasAnswer;
   int topicScore;
   int topicAnswer;
-  List<String> topicTag;
+  List<String> topicTag = new List();
   int questionId;
   int lastActivityDate;
+  Owner owner;
 
   ResponseQuestion(
       {this.topicName,
@@ -17,12 +19,8 @@ class ResponseQuestion {
       this.topicAnswer,
       this.questionId,
       this.topicTag,
-      this.lastActivityDate});
-
-  static List<String> parseTags(tagsJson) {
-    List<String> parseTags = new List<String>.from(tagsJson);
-    return parseTags;
-  }
+      this.lastActivityDate,
+      this.owner});
 
   factory ResponseQuestion.fromJson(Map<String, dynamic> json) {
     return ResponseQuestion(
@@ -31,8 +29,10 @@ class ResponseQuestion {
         topicScore: json['score'],
         topicAnswer: json['answer_count'],
         questionId: json['question_id'],
-        topicTag: parseTags(json['tags']),
-        lastActivityDate: json['last_activity_date']
-    );
+        topicTag: List<String>.from(json['tags']) != null
+            ? List<String>.from(json['tags'])
+            : [],
+        lastActivityDate: json['last_activity_date'],
+        owner: Owner.fromJson(json['owner']));
   }
 }

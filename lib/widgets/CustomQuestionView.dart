@@ -29,21 +29,23 @@ class QuestionView extends Container {
         DateTime.fromMillisecondsSinceEpoch(lastActivity * 1000)
             .millisecondsSinceEpoch;
     int now = DateTime.now().millisecondsSinceEpoch;
-    double result = (now - lastActivityTime) / 1000;
-    int resultTime =
-        int.parse(new NumberFormat('####', "en_US").format(result));
+    int resultTime = _parseTime((now - lastActivityTime) / 1000);
     if (resultTime < 60) {
       return resultTime.toString() + " second agos";
     } else if (resultTime < 3600) {
-      return (resultTime % 60).toString() + " minute agos";
+      return _parseTime(resultTime / 60).toString() + " minute agos";
     } else if (resultTime < 86400) {
-      return (resultTime % 3600).toString() + " day agos";
+      return _parseTime(resultTime / 3600).toString() + " day agos";
     } else if (resultTime < 604800) {
-      return (resultTime % 86400).toString() + " month agos";
+      return _parseTime(resultTime / 86400).toString() + " month agos";
     } else {
       return DateFormat('dd-MM-yyyy')
           .format(DateTime.fromMillisecondsSinceEpoch(lastActivityTime));
     }
+  }
+
+  static int _parseTime(double time){
+    return int.parse(new NumberFormat('####', "en_US").format(time));
   }
 
   QuestionView(
