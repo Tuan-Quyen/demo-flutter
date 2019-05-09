@@ -34,6 +34,7 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
       _listHot.addAll(rest
           .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
           .toList());
+      _listHot.elementAt(0).owner.setName = "adsasd";
     }
   }
 
@@ -65,7 +66,7 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   TransitionToImage(
-                    image: AdvancedNetworkImage(_list[position].owner.iconUrl,
+                    image: AdvancedNetworkImage(_list[position].owner.getIcon,
                         timeoutDuration: Duration(milliseconds: 2000),
                         useDiskCache: true,
                         cacheRule: CacheRule(
@@ -84,7 +85,7 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
                     child: Text(
-                      _list[position].owner.name,
+                      _list[position].owner.getName,
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 16),
                     ),
