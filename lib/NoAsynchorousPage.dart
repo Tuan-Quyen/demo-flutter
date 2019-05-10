@@ -8,14 +8,14 @@ import 'package:flutter_advanced_networkimage/transition.dart';
 import 'package:flutter_advanced_networkimage/provider.dart';
 import 'package:flutter_app/models/responses/ResponseQuestion.dart';
 
-class AsynchorousPage extends StatefulWidget {
-  AsynchorousPage({Key key}) : super(key: key);
+class NoAsynchorousPage extends StatefulWidget {
+  NoAsynchorousPage({Key key}) : super(key: key);
 
   @override
-  _MyAsynchorousPageState createState() => _MyAsynchorousPageState();
+  _MyNoAsynchorousPageState createState() => _MyNoAsynchorousPageState();
 }
 
-class _MyAsynchorousPageState extends State<AsynchorousPage> {
+class _MyNoAsynchorousPageState extends State<NoAsynchorousPage> {
   List<ResponseQuestion> _listHot = [], _listVotes = [];
   int _page = 1;
   bool isLoadHot = true, isLoadVotes = true;

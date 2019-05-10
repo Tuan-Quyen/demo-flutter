@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/AsynchorousPage.dart';
+import 'package:flutter_app/NoAsynchorousPage.dart';
 import 'package:flutter_app/QuestionPage.dart';
 import 'package:flutter_app/LoginPage.dart';
 import 'package:flutter_app/ImageLoadPage.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
           '/LoginPage': (BuildContext context) => LoginPage(),
           '/QuestionPage': (BuildContext context) => QuestionPage(),
           '/ImageLoadPage': (BuildContext context) => ImageLoadPage(),
-          '/AsynchorousPage': (BuildContext context) => AsynchorousPage()
+          '/AsynchorousPage': (BuildContext context) => AsynchorousPage(),
+          '/NoAsynchorousPage': (BuildContext context) => NoAsynchorousPage()
         });
   }
 }

@@ -104,8 +104,10 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
           "Asynchorous Page",
           style: TextStyle(color: Colors.white, fontSize: 23),
         ),
-        hasRight: false,
+        hasRight: true,
         hasLeft: false,
+        context: context,
+        navigatorRoute: "/NoAsynchorousPage",
         color: Colors.lightBlue,
       ),
       body: Center(
