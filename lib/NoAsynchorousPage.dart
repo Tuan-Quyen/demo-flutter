@@ -23,6 +23,8 @@ class _MyNoAsynchorousPageState extends State<NoAsynchorousPage> {
   @override
   void initState() {
     super.initState();
+    getQuestionHot();
+    getQuestionVotes();
   }
 
   getQuestionHot() async {
@@ -49,7 +51,7 @@ class _MyNoAsynchorousPageState extends State<NoAsynchorousPage> {
       print("Votes: " + DateTime.now().millisecond.toString());
       if (this.mounted) {
         setState(() {
-          isLoadVotes = true;
+          isLoadVotes = false;
           _listVotes.addAll(rest
               .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
               .toList());
@@ -111,7 +113,7 @@ class _MyNoAsynchorousPageState extends State<NoAsynchorousPage> {
       resizeToAvoidBottomInset: true,
       appBar: CustomAppBar(
         title: Text(
-          "Asynchorous Page",
+          "No Asynchorous Page",
           style: TextStyle(color: Colors.white, fontSize: 23),
         ),
         hasRight: false,

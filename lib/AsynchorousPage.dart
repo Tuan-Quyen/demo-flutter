@@ -22,15 +22,15 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
   @override
   void initState() {
     super.initState();
-    _futureVotes = getQuestionVotes();
-    _futureHot = getQuestionHot();
+    _futureVotes = Future.delayed(Duration(milliseconds: 2000), getQuestionVotes);
+    _futureHot = _futureVotes.whenComplete(getQuestionHot);
   }
 
   Future<List<ResponseQuestion>> getQuestionHot() async {
     final res = await http.get(BaseUrl.questionRequest(_page, "hot"));
     if (res.statusCode == 200) {
       var rest = json.decode(res.body)["items"] as List;
-      print("Hot: " + DateTime.now().millisecond.toString());
+      print("Hot: " + DateTime.now().toString());
       _listHot.addAll(rest
           .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
           .toList());
@@ -42,7 +42,7 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
     final res = await http.get(BaseUrl.questionRequest(_page, "votes"));
     if (res.statusCode == 200) {
       var rest = json.decode(res.body)["items"] as List;
-      print("Votes: " + DateTime.now().millisecond.toString());
+      print("Votes: " + DateTime.now().toString());
       _listVotes.addAll(rest
           .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
           .toList());
@@ -56,7 +56,8 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
         shrinkWrap: true,
         separatorBuilder: (context, int index) => IntrinsicHeight(
               child: Container(
-                  margin: const EdgeInsets.only(left: 5,right: 5), color: Colors.white),
+                  margin: const EdgeInsets.only(left: 5, right: 5),
+                  color: Colors.white),
             ),
         itemBuilder: (context, position) {
           return Container(
