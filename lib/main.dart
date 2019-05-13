@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/AsynchorousPage.dart';
@@ -5,16 +6,20 @@ import 'package:flutter_app/NoAsynchorousPage.dart';
 import 'package:flutter_app/QuestionPage.dart';
 import 'package:flutter_app/LoginPage.dart';
 import 'package:flutter_app/ImageLoadPage.dart';
-import 'package:flutter_app/widgets/GalleryPage.dart';
+import 'package:flutter_app/GalleryPage.dart';
+import 'package:flutter_app/CameraPage.dart';
 
-void main() {
+List<CameraDescription> cameras;
+
+Future<void> main() async{
+  cameras = await availableCameras();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
     runApp(MyApp());
   });
 }
+
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,14 +27,15 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ImageLoadPage(),
+        home: GalleryPage(),
         routes: <String, WidgetBuilder>{
           '/LoginPage': (BuildContext context) => LoginPage(),
           '/QuestionPage': (BuildContext context) => QuestionPage(),
           '/ImageLoadPage': (BuildContext context) => ImageLoadPage(),
           '/AsynchorousPage': (BuildContext context) => AsynchorousPage(),
           '/NoAsynchorousPage': (BuildContext context) => NoAsynchorousPage(),
-          '/GalleryPage': (BuildContext context) => GalleryPage()
+          '/GalleryPage': (BuildContext context) => GalleryPage(),
+          '/CameraPage': (BuildContext context) => TakePictureScreen(camera: cameras.first,),
         });
   }
 }

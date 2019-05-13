@@ -14,9 +14,15 @@ class GalleryPage extends StatefulWidget {
 class _MyGalleryPageState extends State<GalleryPage> {
   File _image;
 
-  Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+  /*Future getCamera() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+      _image = image;
+    });
+  }*/
 
+  Future getGallery() async{
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
     });
@@ -31,17 +37,32 @@ class _MyGalleryPageState extends State<GalleryPage> {
           style: TextStyle(color: Colors.white, fontSize: 23),),
         color: Colors.lightBlue,
         hasLeft: false,
-        hasRight: false,
+        hasRight: true,
+        navigatorRoute: "/CameraPage",
+        context: context,
       ),
       body: new Center(
         child: _image == null
             ? new Text('No image selected.')
             : new Image.file(_image),
       ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: getImage,
-        child: new Icon(Icons.add_a_photo),
-      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: <Widget>[
+          /*FloatingActionButton(
+            onPressed: getCamera,
+            child: new Icon(Icons.add_a_photo),
+          ),*/
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: FloatingActionButton(
+              onPressed: getGallery,
+              child: new Icon(Icons.camera),
+            ),
+          ),
+        ],
+      )
     );
   }
 }
