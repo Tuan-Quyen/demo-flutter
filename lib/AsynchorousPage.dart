@@ -16,37 +16,60 @@ class AsynchorousPage extends StatefulWidget {
 
 class _MyAsynchorousPageState extends State<AsynchorousPage> {
   List<ResponseQuestion> _listHot = [], _listVotes = [];
-  Future<List<ResponseQuestion>> _futureHot, _futureVotes;
+  var _future;
   int _page = 1;
 
   @override
   void initState() {
     super.initState();
-    _futureVotes = Future.delayed(Duration(milliseconds: 2000), getQuestionVotes);
-    _futureHot = _futureVotes.whenComplete(getQuestionHot);
+    _future = future();
   }
 
-  Future<List<ResponseQuestion>> getQuestionHot() async {
-    final res = await http.get(BaseUrl.questionRequest(_page, "hot"));
-    if (res.statusCode == 200) {
-      var rest = json.decode(res.body)["items"] as List;
-      print("Hot: " + DateTime.now().toString());
-      _listHot.addAll(rest
-          .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
-          .toList());
-      _listHot.elementAt(0).owner.setName = "adsasd";
-    }
+  Future<Null> future() async {
+    var future1 =
+        await http.get(BaseUrl.questionRequest(_page, "hot")).then((res) {
+      if (res.statusCode == 200) {
+        var rest = json.decode(res.body)["items"] as List;
+        print("Hot: " + DateTime.now().toString());
+        _listHot.addAll(rest
+            .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
+            .toList());
+        _listHot.elementAt(0).owner.setName = "adsasd";
+      }
+    });
+    var future2 =
+        await http.get(BaseUrl.questionRequest(_page, "votes")).then((res) {
+      if (res.statusCode == 200) {
+        var rest = json.decode(res.body)["items"] as List;
+        print("Votes: " + DateTime.now().toString());
+        _listVotes.addAll(rest
+            .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
+            .toList());
+      }
+    });
+    _future = await future2;
+    _future = await future1;
   }
-
-  Future<List<ResponseQuestion>> getQuestionVotes() async {
-    final res = await http.get(BaseUrl.questionRequest(_page, "votes"));
-    if (res.statusCode == 200) {
-      var rest = json.decode(res.body)["items"] as List;
-      print("Votes: " + DateTime.now().toString());
-      _listVotes.addAll(rest
-          .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
-          .toList());
-    }
+  
+  FutureBuilder _futureBuilder(List list){
+    return FutureBuilder(
+        future: _future,
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.red,
+                ),
+              );
+            default:
+              if (snapshot.hasError)
+                return new Text("Error: ${snapshot.error}");
+              else {
+                return _listView(list);
+              }
+          }
+        });
   }
 
   ListView _listView(List<ResponseQuestion> _list) {
@@ -118,45 +141,11 @@ class _MyAsynchorousPageState extends State<AsynchorousPage> {
           children: <Widget>[
             Container(
               height: 200,
-              child: FutureBuilder(
-                  future: _futureVotes,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      default:
-                        if (snapshot.hasError)
-                          return new Text("Error: ${snapshot.error}");
-                        else {
-                          return _listView(_listVotes);
-                        }
-                    }
-                  }),
+              child: _futureBuilder(_listVotes)
             ),
             Container(
               height: 200,
-              child: FutureBuilder(
-                  future: _futureHot,
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      case ConnectionState.waiting:
-                        return Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      default:
-                        if (snapshot.hasError)
-                          return new Text("Error: ${snapshot.error}");
-                        else {
-                          return _listView(_listHot);
-                        }
-                    }
-                  }),
+              child: _futureBuilder(_listHot)
             )
           ],
         ),

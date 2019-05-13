@@ -116,9 +116,11 @@ class _MyNoAsynchorousPageState extends State<NoAsynchorousPage> {
           "No Asynchorous Page",
           style: TextStyle(color: Colors.white, fontSize: 23),
         ),
-        hasRight: false,
+        hasRight: true,
         hasLeft: false,
         color: Colors.lightBlue,
+        context: context,
+        navigatorRoute: "/GalleryPage",
       ),
       body: Center(
         child: Column(

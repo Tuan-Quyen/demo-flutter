@@ -5,6 +5,7 @@ import 'package:flutter_app/NoAsynchorousPage.dart';
 import 'package:flutter_app/QuestionPage.dart';
 import 'package:flutter_app/LoginPage.dart';
 import 'package:flutter_app/ImageLoadPage.dart';
+import 'package:flutter_app/widgets/GalleryPage.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations(
@@ -27,7 +28,8 @@ class MyApp extends StatelessWidget {
           '/QuestionPage': (BuildContext context) => QuestionPage(),
           '/ImageLoadPage': (BuildContext context) => ImageLoadPage(),
           '/AsynchorousPage': (BuildContext context) => AsynchorousPage(),
-          '/NoAsynchorousPage': (BuildContext context) => NoAsynchorousPage()
+          '/NoAsynchorousPage': (BuildContext context) => NoAsynchorousPage(),
+          '/GalleryPage': (BuildContext context) => GalleryPage()
         });
   }
 }

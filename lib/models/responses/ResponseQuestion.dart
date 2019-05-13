@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:flutter_app/models/local/Owner.dart';
+import 'package:flutter_app/models/local/OwnerModel.dart';
 
 @JsonSerializable()
 class ResponseQuestion {
