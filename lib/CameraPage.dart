@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 
+import 'GalleryPage.dart';
+
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
 
@@ -69,38 +71,20 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         onPressed: () async {
           try {
             await _initializeControllerFuture;
-            final path = join(
-              (await getTemporaryDirectory()).path,
-              '${DateTime.now()}.png',
-            );
-            await _controller.takePicture(path);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(imagePath: path),
-              ),
-            );
+            final Directory appDirectory =
+                await getApplicationDocumentsDirectory();
+            final String pictureDirectory = '${appDirectory.path}/Pictures';
+            await Directory(pictureDirectory).create(recursive: true);
+            final String currentTime =
+                DateTime.now().millisecondsSinceEpoch.toString();
+            final String filePath = '$pictureDirectory/${currentTime}.jpg';
+            await _controller.takePicture(filePath);
+            Navigator.pop(context, filePath);
           } catch (e) {
-            // If an error occurs, log the error to the console.
             print(e);
           }
         },
       ),
-    );
-  }
-}
-
-// A Widget that displays the picture taken by the user
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Display the Picture')),
-      body: Image.file(File(imagePath)),
     );
   }
 }

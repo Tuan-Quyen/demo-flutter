@@ -14,55 +14,76 @@ class GalleryPage extends StatefulWidget {
 class _MyGalleryPageState extends State<GalleryPage> {
   File _image;
 
-  /*Future getCamera() async {
+  Future getCamera() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    setState(() {
-      _image = image;
-    });
-  }*/
+    _image = image;
+    setState(() {});
+  }
 
-  Future getGallery() async{
+  Future getGallery() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    _image = image;
+    print(image.path);
+    setState(() {});
+  }
+
+  _navigateCamera(BuildContext context) async {
+    final result = await Navigator.pushNamed(context, "/CameraPage");
     setState(() {
-      _image = image;
+      _image = File(result);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: Text(
-          "Gallery Page",
-          style: TextStyle(color: Colors.white, fontSize: 23),),
-        color: Colors.lightBlue,
-        hasLeft: false,
-        hasRight: true,
-        navigatorRoute: "/CameraPage",
-        context: context,
-      ),
-      body: new Center(
-        child: _image == null
-            ? new Text('No image selected.')
-            : new Image.file(_image),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: <Widget>[
-          /*FloatingActionButton(
-            onPressed: getCamera,
-            child: new Icon(Icons.add_a_photo),
-          ),*/
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: FloatingActionButton(
-              onPressed: getGallery,
-              child: new Icon(Icons.camera),
-            ),
+        appBar: CustomAppBar(
+          title: Text(
+            "Gallery Page",
+            style: TextStyle(color: Colors.white, fontSize: 23),
           ),
-        ],
-      )
-    );
+          color: Colors.lightBlue,
+          hasLeft: false,
+          hasRight: true,
+          navigatorRoute: "",
+          context: context,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              _image == null
+                  ? new Text('No image selected.')
+                  : new Image.file(
+                      _image,
+                      width: 300,
+                      height: 300,
+                    ),
+              RaisedButton(
+                  color: Colors.cyanAccent,
+                  child: Text("MultiPicker Image"),
+                  onPressed: () {
+                    _navigateCamera(context);
+                  })
+            ],
+          ),
+        ),
+        floatingActionButton: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            /*FloatingActionButton(
+              onPressed: getCamera,
+              child: new Icon(Icons.add_a_photo),
+            ),*/
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: FloatingActionButton(
+                onPressed: getGallery,
+                child: new Icon(Icons.camera),
+              ),
+            ),
+          ],
+        ));
   }
 }
