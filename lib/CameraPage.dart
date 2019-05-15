@@ -66,24 +66,34 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           }
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
-        onPressed: () async {
-          try {
-            await _initializeControllerFuture;
-            final Directory appDirectory =
-                await getApplicationDocumentsDirectory();
-            final String pictureDirectory = '${appDirectory.path}/Pictures';
-            await Directory(pictureDirectory).create(recursive: true);
-            final String currentTime =
-                DateTime.now().millisecondsSinceEpoch.toString();
-            final String filePath = '$pictureDirectory/${currentTime}.jpg';
-            await _controller.takePicture(filePath);
-            Navigator.pop(context, filePath);
-          } catch (e) {
-            print(e);
-          }
-        },
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(left: 40),
+            child: FloatingActionButton(
+              child: Icon(Icons.camera_alt),
+              onPressed: () async {
+                try {
+                  await _initializeControllerFuture;
+                  final Directory appDirectory =
+                      await getApplicationDocumentsDirectory();
+                  final String pictureDirectory =
+                      '${appDirectory.path}/Pictures';
+                  await Directory(pictureDirectory).create(recursive: true);
+                  final String currentTime =
+                      DateTime.now().millisecondsSinceEpoch.toString();
+                  final String filePath =
+                      '$pictureDirectory/${currentTime}.jpg';
+                  await _controller.takePicture(filePath);
+                  Navigator.pop(context, filePath);
+                } catch (e) {
+                  print(e);
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

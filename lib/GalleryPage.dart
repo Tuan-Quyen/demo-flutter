@@ -30,7 +30,7 @@ class _MyGalleryPageState extends State<GalleryPage> {
   _navigateCamera(BuildContext context) async {
     final result = await Navigator.pushNamed(context, "/CameraPage");
     setState(() {
-      _image = File(result);
+      result != null ? _image = File(result) : null;
     });
   }
 
