@@ -86,12 +86,12 @@ class _MyGalleryPageState extends State<GalleryPage> {
                       width: 300,
                       height: 300,
                     ),
-              RaisedButton(
+             /* RaisedButton(
                   color: Colors.cyanAccent,
-                  child: Text("MultiPicker Image"),
+                  child: Text("Capture Image"),
                   onPressed: () {
                     _navigateCamera(context);
-                  })
+                  })*/
             ],
           ),
         ),
