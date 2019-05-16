@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -26,7 +25,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   void initState() {
     super.initState();
-    //initCamera();
     checkPermission();
   }
 

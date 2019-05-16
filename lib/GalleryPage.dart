@@ -17,6 +17,12 @@ class GalleryPage extends StatefulWidget {
 class _MyGalleryPageState extends State<GalleryPage> {
   File _image;
 
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   checkPermission() async {
     final statusCamera = await CheckPermission().checkPermissionCamera();
     final statusStorage = await CheckPermission().checkPermissionStorage();
@@ -24,8 +30,6 @@ class _MyGalleryPageState extends State<GalleryPage> {
         await CheckPermission().checkPermissionMicroPhone();
     if (statusCamera && statusMicroPhone && statusStorage) {
       getCamera();
-    } else {
-      setState(() {});
     }
   }
 
@@ -86,7 +90,7 @@ class _MyGalleryPageState extends State<GalleryPage> {
                       width: 300,
                       height: 300,
                     ),
-             /* RaisedButton(
+              /* RaisedButton(
                   color: Colors.cyanAccent,
                   child: Text("Capture Image"),
                   onPressed: () {
@@ -95,17 +99,18 @@ class _MyGalleryPageState extends State<GalleryPage> {
             ],
           ),
         ),
-        floatingActionButton: Column(
+        floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             FloatingActionButton(
+              heroTag: 0,
               onPressed: checkPermission,
               child: new Icon(Icons.add_a_photo),
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(left: 10),
               child: FloatingActionButton(
+                heroTag: 1,
                 onPressed: getGallery,
                 child: new Icon(Icons.camera),
               ),

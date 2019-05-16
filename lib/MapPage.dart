@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_app/widgets/CustomAppBar.dart';
-//import 'package:location/location.dart';
-import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -12,32 +12,21 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  Map<String,double> currentLocation = new Map();
-  StreamSubscription<Map<String,double>> locationSubcription;
-  //var location = new Location();
-  String error;
-
   Completer<GoogleMapController> _completer = Completer();
+  GoogleMapController controller;
+  Position location;
 
   @override
   void initState() {
     super.initState();
-    currentLocation['latitude'] = 0.0;
-    currentLocation['longitude'] = 0.0;
     initPermissionCheck();
-    /*location.onLocationChanged().listen((currentLocation){
-      setState(() {
-        this.currentLocation = currentLocation as Map<String, double>;
-      });
-    });*/
   }
 
-  final CameraPosition _cameraPosition = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  static CameraPosition _cameraPosition(double latitude, double longitude) {
+    return CameraPosition(target: LatLng(latitude, longitude), zoom: 18);
+  }
 
-  void _onMapCreated(GoogleMapController controller) {
+  Future _onMapCreated(GoogleMapController controller) async {
     _completer.complete(controller);
   }
 
@@ -54,33 +43,44 @@ class _MapPageState extends State<MapPage> {
         hasRight: false,
       ),
       body: GoogleMap(
-        markers: {
-          testMarker
-        },
+        markers: {testMarker},
         myLocationButtonEnabled: true,
         myLocationEnabled: true,
+        initialCameraPosition: location != null
+            ? _cameraPosition(location.latitude, location.longitude)
+            : _cameraPosition(37.42796133580664, -122.085749655962),
         mapType: MapType.normal,
-        initialCameraPosition: _cameraPosition,
         onMapCreated: _onMapCreated,
       ),
     );
   }
 
   Marker testMarker = Marker(
-    markerId: MarkerId("TestMaker"),
-    position: LatLng(37.42796133580664, -122.085749655962),
-    infoWindow: InfoWindow(title: "TestMarker")
-  );
+      markerId: MarkerId("TestMaker"),
+      position: LatLng(37.42796133580664, -122.085749655962),
+      infoWindow: InfoWindow(title: "TestMarker"));
 
-  void initPermissionCheck() {
-    try{
-
-    }on PlatformException catch(e){
-      if(e.code == "PERMISSION_DENIED"){
-        
-      }else if(e.code == "PERMISSION_DENIED_NEVER_ASK"){
-
-      }
+  void initPermissionCheck() async {
+    final statusLocation = await CheckPermission().checkPermissionLocation();
+    if (statusLocation) {
+      _currentPosition();
     }
+  }
+
+  Future<void> _currentPosition() async {
+    controller = await _completer.future;
+    await Geolocator().getLastKnownPosition().then((currenLocation) {
+      setState(() {
+        if (currenLocation == null) {
+          Geolocator().getCurrentPosition().then((currenLocation) {
+            location = currenLocation;
+          });
+        } else {
+          location = currenLocation;
+        }
+        controller.animateCamera(CameraUpdate.newCameraPosition(
+            _cameraPosition(location.latitude, location.longitude)));
+      });
+    });
   }
 }
