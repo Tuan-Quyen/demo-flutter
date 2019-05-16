@@ -2,6 +2,7 @@
     package="com.demo.flutter_app">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
@@ -12,6 +13,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Flutter"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBDVYGJewwnChu0dxYGLHP7rRH1ttBXhCs"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

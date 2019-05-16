@@ -8,6 +8,7 @@ import 'package:flutter_app/LoginPage.dart';
 import 'package:flutter_app/ImageLoadPage.dart';
 import 'package:flutter_app/GalleryPage.dart';
 import 'package:flutter_app/CameraPage.dart';
+import 'package:flutter_app/MapPage.dart';
 
 List<CameraDescription> cameras;
 
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
           '/NoAsynchorousPage': (BuildContext context) => NoAsynchorousPage(),
           '/GalleryPage': (BuildContext context) => GalleryPage(),
           '/CameraPage': (BuildContext context) => TakePictureScreen(camera: cameras.first,),
+          '/MapPage': (BuildContext context) => MapPage(),
         });
   }
 }

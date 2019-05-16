@@ -1,8 +1,12 @@
 import 'dart:io';
+import 'dart:async';
+
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:flutter_app/widgets/CustomAppBar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GalleryPage extends StatefulWidget {
   GalleryPage({Key key}) : super(key: key);
@@ -14,10 +18,33 @@ class GalleryPage extends StatefulWidget {
 class _MyGalleryPageState extends State<GalleryPage> {
   File _image;
 
-  Future getCamera() async {
+  /*checkPermission() async {
+    final statusCamera = await CheckPermission().checkPermissionCamera();
+    final statusStorage = await CheckPermission().checkPermissionStorage();
+    final statusMicroPhone = await CheckPermission().checkPermissionMicroPhone();
+    if (statusCamera && statusMicroPhone && statusStorage) {
+      getCamera();
+    } else {
+      setState(() {});
+    }
+  }*/
+
+  /*Future getCamera() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    _image = image;
-    setState(() {});
+    if (image == null) return;
+    await pathImage(image);
+  }*/
+
+  Future<String> pathImage(var image) async {
+    final Directory appDirectory = await getExternalStorageDirectory();
+    final String pictureDirectory = '${appDirectory.path}/Pictures';
+    await Directory(pictureDirectory).create(recursive: true);
+    final String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    final String filePath = '$pictureDirectory/${currentTime}.jpg';
+    final File localImage = await image.copy(filePath);
+    setState(() {
+      _image = localImage;
+    });
   }
 
   Future getGallery() async {
@@ -45,7 +72,7 @@ class _MyGalleryPageState extends State<GalleryPage> {
           color: Colors.lightBlue,
           hasLeft: false,
           hasRight: true,
-          navigatorRoute: "",
+          navigatorRoute: "/MapPage",
           context: context,
         ),
         body: Center(
@@ -73,7 +100,7 @@ class _MyGalleryPageState extends State<GalleryPage> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             /*FloatingActionButton(
-              onPressed: getCamera,
+              onPressed: (){},
               child: new Icon(Icons.add_a_photo),
             ),*/
             Padding(

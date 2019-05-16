@@ -3,10 +3,9 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' show join;
+import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'GalleryPage.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -27,41 +26,115 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   void initState() {
     super.initState();
-    // In order to display the current output from the Camera, you need to
-    // create a CameraController.
-    _controller = CameraController(
-      // Get a specific camera from the list of available cameras
-      widget.camera,
-      // Define the resolution to use
-      ResolutionPreset.high,
-    );
-
-    // Next, you need to initialize the controller. This returns a Future
-    _initializeControllerFuture = _controller.initialize();
+    initCamera();
+    //checkPermission();
   }
 
   @override
   void dispose() {
-    // Make sure to dispose of the controller when the Widget is disposed
-    _controller.dispose();
+    if (_controller != null) {
+      _controller.dispose();
+    }
     super.dispose();
+  }
+
+  /*checkPermission() async {
+    final statusCamera = await checkPermissionCamera();
+    final statusStorage = await checkPermissionStorage();
+    final statusMicroPhone = await checkPermissionMicroPhone();
+    if (statusCamera && statusMicroPhone && statusStorage) {
+      setState(() {
+        initCamera();
+      });
+    } else {
+      setState(() {
+        Navigator.pop(context);
+      });
+    }
+  }*/
+
+  checkPermissionStorage() async {
+    PermissionStatus checkResultStorage = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.storage);
+    if (checkResultStorage.value == 0) {
+      await PermissionHandler()
+          .requestPermissions([PermissionGroup.storage]).then(
+              (Map<PermissionGroup, PermissionStatus> status) async {
+            if (status[PermissionGroup.storage].value == 2) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+    } else {
+      return true;
+    }
+  }
+
+  checkPermissionCamera() async {
+    PermissionStatus checkResultCamera =
+    await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
+    if (checkResultCamera.value == 0) {
+      await PermissionHandler()
+          .requestPermissions([PermissionGroup.camera]).then(
+              (Map<PermissionGroup, PermissionStatus> status) async {
+            if (status[PermissionGroup.camera].value == 2) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+    } else {
+      return true;
+    }
+  }
+
+  checkPermissionMicroPhone() async {
+    PermissionStatus checkResultMicroPhone = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.microphone);
+    if (checkResultMicroPhone.value == 0) {
+      await PermissionHandler()
+          .requestPermissions([PermissionGroup.microphone]).then(
+              (Map<PermissionGroup, PermissionStatus> status) async {
+            if (status[PermissionGroup.microphone].value == 2) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+    } else {
+      return true;
+    }
+  }
+
+  void initCamera() {
+    _controller = CameraController(
+      widget.camera,
+      ResolutionPreset.high,
+    );
+    _initializeControllerFuture = _controller.initialize();
+  }
+
+  Future<String> pathImage() async {
+    final Directory appDirectory = await getExternalStorageDirectory();
+    final String pictureDirectory = '${appDirectory.path}/Pictures';
+    await Directory(pictureDirectory).create(recursive: true);
+    final String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    final String filePath = '$pictureDirectory/${currentTime}.jpg';
+    await _controller.takePicture(filePath);
+    Navigator.pop(context, filePath);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Take a picture')),
-      // You must wait until the controller is initialized before displaying the
-      // camera preview. Use a FutureBuilder to display a loading spinner until
-      // the controller has finished initializing
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            // If the Future is complete, display the preview
             return CameraPreview(_controller);
           } else {
-            // Otherwise, display a loading indicator
             return Center(child: CircularProgressIndicator());
           }
         },
@@ -76,17 +149,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               onPressed: () async {
                 try {
                   await _initializeControllerFuture;
-                  final Directory appDirectory =
-                      await getApplicationDocumentsDirectory();
-                  final String pictureDirectory =
-                      '${appDirectory.path}/Pictures';
-                  await Directory(pictureDirectory).create(recursive: true);
-                  final String currentTime =
-                      DateTime.now().millisecondsSinceEpoch.toString();
-                  final String filePath =
-                      '$pictureDirectory/${currentTime}.jpg';
-                  await _controller.takePicture(filePath);
-                  Navigator.pop(context, filePath);
+                  pathImage();
                 } catch (e) {
                   print(e);
                 }

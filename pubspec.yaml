@@ -28,9 +28,10 @@ dependencies:
   image_picker: ^0.6.0+3
   flutter_advanced_networkimage: ^0.4.15
   camera: ^0.5.0
+  google_maps_flutter: ^0.5.13
+  location: ^2.3.5
   path_provider: ^0.5.0
-  path: ^1.6.2
-
+  permission_handler: ^3.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
