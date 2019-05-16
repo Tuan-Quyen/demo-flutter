@@ -26,8 +26,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   void initState() {
     super.initState();
-    initCamera();
-    //checkPermission();
+    //initCamera();
+    checkPermission();
   }
 
   @override
@@ -38,10 +38,10 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     super.dispose();
   }
 
-  /*checkPermission() async {
-    final statusCamera = await checkPermissionCamera();
-    final statusStorage = await checkPermissionStorage();
-    final statusMicroPhone = await checkPermissionMicroPhone();
+  checkPermission() async {
+    final statusCamera = await CheckPermission().checkPermissionCamera();
+    final statusStorage = await CheckPermission().checkPermissionStorage();
+    final statusMicroPhone = await CheckPermission().checkPermissionMicroPhone();
     if (statusCamera && statusMicroPhone && statusStorage) {
       setState(() {
         initCamera();
@@ -50,60 +50,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       setState(() {
         Navigator.pop(context);
       });
-    }
-  }*/
-
-  checkPermissionStorage() async {
-    PermissionStatus checkResultStorage = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.storage);
-    if (checkResultStorage.value == 0) {
-      await PermissionHandler()
-          .requestPermissions([PermissionGroup.storage]).then(
-              (Map<PermissionGroup, PermissionStatus> status) async {
-            if (status[PermissionGroup.storage].value == 2) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-    } else {
-      return true;
-    }
-  }
-
-  checkPermissionCamera() async {
-    PermissionStatus checkResultCamera =
-    await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
-    if (checkResultCamera.value == 0) {
-      await PermissionHandler()
-          .requestPermissions([PermissionGroup.camera]).then(
-              (Map<PermissionGroup, PermissionStatus> status) async {
-            if (status[PermissionGroup.camera].value == 2) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-    } else {
-      return true;
-    }
-  }
-
-  checkPermissionMicroPhone() async {
-    PermissionStatus checkResultMicroPhone = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.microphone);
-    if (checkResultMicroPhone.value == 0) {
-      await PermissionHandler()
-          .requestPermissions([PermissionGroup.microphone]).then(
-              (Map<PermissionGroup, PermissionStatus> status) async {
-            if (status[PermissionGroup.microphone].value == 2) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-    } else {
-      return true;
     }
   }
 

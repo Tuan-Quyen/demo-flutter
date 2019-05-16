@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:async';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:flutter_app/widgets/CustomAppBar.dart';
@@ -18,22 +17,23 @@ class GalleryPage extends StatefulWidget {
 class _MyGalleryPageState extends State<GalleryPage> {
   File _image;
 
-  /*checkPermission() async {
+  checkPermission() async {
     final statusCamera = await CheckPermission().checkPermissionCamera();
     final statusStorage = await CheckPermission().checkPermissionStorage();
-    final statusMicroPhone = await CheckPermission().checkPermissionMicroPhone();
+    final statusMicroPhone =
+        await CheckPermission().checkPermissionMicroPhone();
     if (statusCamera && statusMicroPhone && statusStorage) {
       getCamera();
     } else {
       setState(() {});
     }
-  }*/
+  }
 
-  /*Future getCamera() async {
+  Future getCamera() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
     if (image == null) return;
     await pathImage(image);
-  }*/
+  }
 
   Future<String> pathImage(var image) async {
     final Directory appDirectory = await getExternalStorageDirectory();
@@ -99,10 +99,10 @@ class _MyGalleryPageState extends State<GalleryPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            /*FloatingActionButton(
-              onPressed: (){},
+            FloatingActionButton(
+              onPressed: checkPermission,
               child: new Icon(Icons.add_a_photo),
-            ),*/
+            ),
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: FloatingActionButton(
