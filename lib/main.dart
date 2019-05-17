@@ -10,6 +10,8 @@ import 'package:flutter_app/GalleryPage.dart';
 import 'package:flutter_app/CameraPage.dart';
 import 'package:flutter_app/MapPage.dart';
 
+import 'MultiImagePage.dart';
+
 List<CameraDescription> cameras;
 
 Future<void> main() async{
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: GalleryPage(),
+        home: MultiImagePage(),
         routes: <String, WidgetBuilder>{
           '/LoginPage': (BuildContext context) => LoginPage(),
           '/QuestionPage': (BuildContext context) => QuestionPage(),
@@ -38,6 +40,7 @@ class MyApp extends StatelessWidget {
           '/GalleryPage': (BuildContext context) => GalleryPage(),
           '/CameraPage': (BuildContext context) => TakePictureScreen(camera: cameras.first,),
           '/MapPage': (BuildContext context) => MapPage(),
+          '/MultiImagePage': (BuildContext context) => MultiImagePage()
         });
   }
 }

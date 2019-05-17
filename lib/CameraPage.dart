@@ -7,6 +7,8 @@ import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
 
+
+//quay camera
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
 
