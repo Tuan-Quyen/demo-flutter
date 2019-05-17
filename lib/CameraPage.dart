@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'dart:io';
+import 'dart:io' show Directory, Platform;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:path/path.dart' show join;
 
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -41,7 +41,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   checkPermission() async {
     final statusCamera = await CheckPermission().checkPermissionCamera();
     final statusStorage = await CheckPermission().checkPermissionStorage();
-    final statusMicroPhone = await CheckPermission().checkPermissionMicroPhone();
+    final statusMicroPhone =
+        await CheckPermission().checkPermissionMicroPhone();
     if (statusCamera && statusMicroPhone && statusStorage) {
       setState(() {
         initCamera();
@@ -62,11 +63,20 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 
   Future<String> pathImage() async {
-    final Directory appDirectory = await getExternalStorageDirectory();
-    final String pictureDirectory = '${appDirectory.path}/Pictures';
-    await Directory(pictureDirectory).create(recursive: true);
-    final String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
-    final String filePath = '$pictureDirectory/${currentTime}.jpg';
+    String filePath;
+    if (Platform.isAndroid) {
+      final Directory appDirectory = await getExternalStorageDirectory();
+      final String pictureDirectory = '${appDirectory.path}/Pictures';
+      await Directory(pictureDirectory).create(recursive: true);
+      final String currentTime =
+          DateTime.now().millisecondsSinceEpoch.toString();
+      filePath = '$pictureDirectory/${currentTime}.jpg';
+    } else if (Platform.isIOS) {
+      filePath = join(
+        (await getTemporaryDirectory()).path,
+        '${DateTime.now()}.png',
+      );
+    }
     await _controller.takePicture(filePath);
     Navigator.pop(context, filePath);
   }

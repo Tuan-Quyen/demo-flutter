@@ -21,7 +21,7 @@ class _MyGalleryPageState extends State<GalleryPage> {
     final statusCamera = await CheckPermission().checkPermissionCamera();
     final statusStorage = await CheckPermission().checkPermissionStorage();
     final statusMicroPhone =
-        await CheckPermission().checkPermissionMicroPhone();
+    await CheckPermission().checkPermissionMicroPhone();
     if (statusCamera && statusMicroPhone && statusStorage) {
       getCamera();
     } else {
@@ -39,7 +39,10 @@ class _MyGalleryPageState extends State<GalleryPage> {
     final Directory appDirectory = await getExternalStorageDirectory();
     final String pictureDirectory = '${appDirectory.path}/Pictures';
     await Directory(pictureDirectory).create(recursive: true);
-    final String currentTime = DateTime.now().millisecondsSinceEpoch.toString();
+    final String currentTime = DateTime
+        .now()
+        .millisecondsSinceEpoch
+        .toString();
     final String filePath = '$pictureDirectory/${currentTime}.jpg';
     final File localImage = await image.copy(filePath);
     setState(() {
@@ -49,8 +52,9 @@ class _MyGalleryPageState extends State<GalleryPage> {
 
   Future getGallery() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    _image = image;
-    print(image.path);
+    if (image != null) {
+      _image = image;
+    };
     setState(() {});
   }
 
@@ -82,16 +86,16 @@ class _MyGalleryPageState extends State<GalleryPage> {
               _image == null
                   ? new Text('No image selected.')
                   : new Image.file(
-                      _image,
-                      width: 300,
-                      height: 300,
-                    ),
-             /* RaisedButton(
+                _image,
+                width: 300,
+                height: 300,
+              ),
+               RaisedButton(
                   color: Colors.cyanAccent,
                   child: Text("Capture Image"),
                   onPressed: () {
                     _navigateCamera(context);
-                  })*/
+                  })
             ],
           ),
         ),
@@ -99,10 +103,10 @@ class _MyGalleryPageState extends State<GalleryPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            FloatingActionButton(
+            /*FloatingActionButton(
               onPressed: checkPermission,
               child: new Icon(Icons.add_a_photo),
-            ),
+            ),*/
             Padding(
               padding: const EdgeInsets.only(top: 10),
               child: FloatingActionButton(
