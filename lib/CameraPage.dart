@@ -7,28 +7,32 @@ import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
 
+import 'models/local/FilePathImageVideo.dart';
 
-//quay camera
+List<CameraDescription> cameras;
+
 class TakePictureScreen extends StatefulWidget {
-  final CameraDescription camera;
-
-  const TakePictureScreen({
-    Key key,
-    @required this.camera,
-  }) : super(key: key);
+  TakePictureScreen({Key key}) : super(key: key);
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
 }
 
 class TakePictureScreenState extends State<TakePictureScreen> {
+  bool check = false, isVideo = false;
+  String videoPath;
   CameraController _controller;
   Future<void> _initializeControllerFuture;
+
+  Future<void> _futureCamera() async {
+    cameras = await availableCameras();
+  }
 
   @override
   void initState() {
     super.initState();
     //initCamera();
+    _futureCamera();
     checkPermission();
   }
 
@@ -47,7 +51,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         await CheckPermission().checkPermissionMicroPhone();
     if (statusCamera && statusMicroPhone && statusStorage) {
       setState(() {
-        initCamera();
+        initCamera(0);
       });
     } else {
       setState(() {
@@ -56,11 +60,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     }
   }
 
-  void initCamera() {
-    _controller = CameraController(
-      widget.camera,
-      ResolutionPreset.high,
-    );
+  void initCamera(int cameraType) {
+    _controller = CameraController(cameras[cameraType], ResolutionPreset.high,
+        enableAudio: isVideo);
     _initializeControllerFuture = _controller.initialize();
   }
 
@@ -68,19 +70,50 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     String filePath;
     if (Platform.isAndroid) {
       final Directory appDirectory = await getExternalStorageDirectory();
-      final String pictureDirectory = '${appDirectory.path}/Pictures';
+      final String pictureDirectory = '${appDirectory.path}/DCIM/Camera';
       await Directory(pictureDirectory).create(recursive: true);
       final String currentTime =
           DateTime.now().millisecondsSinceEpoch.toString();
-      filePath = '$pictureDirectory/${currentTime}.jpg';
-    } else if (Platform.isIOS) {
-      filePath = join(
-        (await getTemporaryDirectory()).path,
-        '${DateTime.now()}.png',
-      );
+      filePath = '$pictureDirectory/IMG_${currentTime}.jpg';
     }
     await _controller.takePicture(filePath);
-    Navigator.pop(context, filePath);
+    Navigator.pop(context, FilePathImageVideo(filePath, true));
+  }
+
+  Future<String> startRecordVideo() async {
+    if (Platform.isAndroid) {
+      final Directory appDirectory = await getExternalStorageDirectory();
+      final String videoDirectory = '${appDirectory.path}/DCIM/Camera';
+      await Directory(videoDirectory).create(recursive: true);
+      final String currentTime =
+          DateTime.now().millisecondsSinceEpoch.toString();
+      videoPath = '$videoDirectory/VID_${currentTime}.mp4';
+    }
+    await _controller.startVideoRecording(videoPath);
+  }
+
+  Future<String> stopRecordVideo() async {
+    await _controller.stopVideoRecording().then((value) {
+      setState(() {
+        if (isVideo == true) {
+          isVideo = false;
+        }
+        Navigator.pop(context, FilePathImageVideo(videoPath, false));
+      });
+    });
+  }
+
+  Future initFutureCamera(bool startRecord) async {
+    try {
+      await _initializeControllerFuture;
+      if (!isVideo) {
+        pathImage();
+      } else {
+        startRecord ? startRecordVideo() : stopRecordVideo();
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -93,28 +126,80 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             return CameraPreview(_controller);
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Container(
+              color: Colors.black,
+            );
           }
         },
       ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(left: 40),
-            child: FloatingActionButton(
-              child: Icon(Icons.camera_alt),
-              onPressed: () async {
-                try {
-                  await _initializeControllerFuture;
-                  pathImage();
-                } catch (e) {
-                  print(e);
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(left: 30, bottom: 30),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            FloatingActionButton(
+              backgroundColor: Colors.white,
+              heroTag: 0,
+              onPressed: () {
+                if (!check) {
+                  setState(() {
+                    check = true;
+                    _initializeControllerFuture = null;
+                    initCamera(1);
+                  });
+                } else {
+                  setState(() {
+                    check = false;
+                    _initializeControllerFuture = null;
+                    initCamera(0);
+                  });
                 }
               },
+              child: RotationTransition(
+                turns: new AlwaysStoppedAnimation(90 / 360),
+                child: Icon(
+                  Icons.sync,
+                  color: Colors.black,
+                ),
+              ),
             ),
-          ),
-        ],
+            Container(
+              //margin: const EdgeInsets.only(left: 40, right: 40),
+              child: FloatingActionButton(
+                heroTag: 1,
+                backgroundColor: isVideo ? Colors.red : Colors.white,
+                child: isVideo
+                    ? null
+                    : Icon(Icons.camera_alt, color: Colors.black),
+                shape: CircleBorder(
+                    side: BorderSide(color: Colors.grey.shade300, width: 1)),
+                onPressed: () {
+                  initFutureCamera(false);
+                },
+              ),
+            ),
+            Visibility(
+                visible: !isVideo,
+                replacement: Container(
+                  width: 50,
+                  height: 50,
+                ),
+                child: FloatingActionButton(
+                    heroTag: 2,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.videocam,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isVideo = true;
+                      });
+                      initFutureCamera(true);
+                    }))
+          ],
+        ),
       ),
     );
   }

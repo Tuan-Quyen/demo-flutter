@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/AsynchorousPage.dart';
@@ -9,13 +8,11 @@ import 'package:flutter_app/ImageLoadPage.dart';
 import 'package:flutter_app/GalleryPage.dart';
 import 'package:flutter_app/CameraPage.dart';
 import 'package:flutter_app/MapPage.dart';
-
+import 'ImageTestPage.dart';
 import 'MultiImagePage.dart';
+import 'VideoPage.dart';
 
-List<CameraDescription> cameras;
-
-Future<void> main() async{
-  cameras = await availableCameras();
+main() async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
     runApp(MyApp());
@@ -30,7 +27,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: MultiImagePage(),
+        home: ImageTestPage(),
         routes: <String, WidgetBuilder>{
           '/LoginPage': (BuildContext context) => LoginPage(),
           '/QuestionPage': (BuildContext context) => QuestionPage(),
@@ -38,7 +35,7 @@ class MyApp extends StatelessWidget {
           '/AsynchorousPage': (BuildContext context) => AsynchorousPage(),
           '/NoAsynchorousPage': (BuildContext context) => NoAsynchorousPage(),
           '/GalleryPage': (BuildContext context) => GalleryPage(),
-          '/CameraPage': (BuildContext context) => TakePictureScreen(camera: cameras.first,),
+          '/CameraPage': (BuildContext context) => TakePictureScreen(),
           '/MapPage': (BuildContext context) => MapPage(),
           '/MultiImagePage': (BuildContext context) => MultiImagePage()
         });

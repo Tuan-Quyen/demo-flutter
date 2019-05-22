@@ -3,7 +3,7 @@ class CheckPermission {
   checkPermissionStorage() async {
     PermissionStatus checkResultStorage = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
-    if (checkResultStorage == PermissionStatus.unknown) {
+    if (checkResultStorage == PermissionStatus.denied) {
       return await PermissionHandler()
           .requestPermissions([PermissionGroup.storage]).then(
               (Map<PermissionGroup, PermissionStatus> status) async {
@@ -21,7 +21,7 @@ class CheckPermission {
   Future<bool> checkPermissionCamera() async {
     PermissionStatus checkResultCamera =
         await PermissionHandler().checkPermissionStatus(PermissionGroup.camera);
-    if (checkResultCamera == PermissionStatus.unknown) {
+    if (checkResultCamera == PermissionStatus.denied) {
       return await PermissionHandler()
           .requestPermissions([PermissionGroup.camera]).then(
               (Map<PermissionGroup, PermissionStatus> status) async {
@@ -39,7 +39,7 @@ class CheckPermission {
   Future<bool> checkPermissionMicroPhone() async {
     PermissionStatus checkResultMicroPhone = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.microphone);
-    if (checkResultMicroPhone == PermissionStatus.unknown) {
+    if (checkResultMicroPhone == PermissionStatus.denied) {
       return await PermissionHandler()
           .requestPermissions([PermissionGroup.microphone]).then(
               (Map<PermissionGroup, PermissionStatus> status) async {

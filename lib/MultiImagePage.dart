@@ -1,134 +1,122 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:multi_image_picker/multi_image_picker.dart';
-import 'package:multi_image_picker/src/asset.dart';
+import 'dart:async';
+import 'package:flutter_app/ultils/CheckPermission.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as im;
 
 class MultiImagePage extends StatefulWidget {
   @override
-  _MyMultiImagePageState createState() => new _MyMultiImagePageState();
+  _MultiImagePageState createState() => new _MultiImagePageState();
 }
 
-class _MyMultiImagePageState extends State<MultiImagePage> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Gallery Demo',
-      home: MyHomePage(title: 'Multi Image Picker'),
-    );
-  }
-}
+class _MultiImagePageState extends State<MultiImagePage> {
+  static const platform = const MethodChannel('samples.flutter.io/files');
+  List<String> imgs = [];
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  List<Asset> _images = List();
-  String _error = '';
-
-  void _pickImages() async {
-    List<Asset> resultList = List<Asset>();
-    String error = '';
-
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 300,
-      );
-    } on PlatformException catch (e) {
-      error = e.message;
+  checkPermission() async {
+    final statusCamera = await CheckPermission().checkPermissionCamera();
+    final statusStorage = await CheckPermission().checkPermissionStorage();
+    final statusMicroPhone =
+    await CheckPermission().checkPermissionMicroPhone();
+    if (statusCamera && statusMicroPhone && statusStorage) {
+      _getImages();
+    } else {
+      setState(() {});
     }
+  }
 
-    if (!mounted) return;
-
+  Future<void> _getImages() async {
+    List images;
+    try {
+      final List result = await platform.invokeMethod('getImages');
+      images = result;
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
     setState(() {
-      _images = resultList;
-      _error = error;
+      for (int i = 0; i < images.length; i++) {
+        if (images[i].toString().endsWith(".jpg")) {
+          imgs.add(images[i].toString());
+        } else if (images[i].toString().endsWith(".png")) {
+          imgs.add(images[i].toString());
+        }
+      }
+      print(imgs);
     });
   }
 
-  Widget _getContent() {
-    if (_error.length > 0) {
-      return Center(
-        child: Text(_error),
-      );
-    }
-
-    if (_images.length == 0) {
-      return Center(
-        child: Text('Please select some images ...'),
-      );
-    }
-
-    return PageView.builder(
-      itemBuilder: (context, index) {
-        return Center(
-          child: AssetView(
-            _images[index],
-            key: UniqueKey(),
-          ),
-        );
+  FutureBuilder _itemImage(String imgs) {
+    return FutureBuilder(
+      future: _loadThumb(imgs),
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.hasData) {
+          return snapshot.data; // image is ready
+        } else {
+          return new Center(
+            child: new CircularProgressIndicator(),
+          );
+        }
       },
-      itemCount: _images.length,
     );
+  }
+
+  Future<Image> _loadThumb(String imgs) async {
+    // read image
+    final Directory exDirectory = await getExternalStorageDirectory();
+    final Directory tempDirectory = await getTemporaryDirectory();
+    String exPath = '${exDirectory.path}/Pictures/' + imgs; //
+    String tempPath = '${tempDirectory.path}/' + imgs; //
+    print(File(exPath).toString());
+    Image image = Image.file(
+      File(exPath),
+      fit: BoxFit.fill,
+      width: 64,
+      height: 64,
+      repeat: ImageRepeat.noRepeat,
+      filterQuality: FilterQuality.low,
+    );
+    return image;
+    /*thumbInts = await fileImage.readAsBytes();
+    ByteBuffer buffer = Uint8List.fromList(thumbInts).buffer;
+    ByteData byteData = new ByteData.view(buffer);
+    var _imageThumbView = new Image.memory(
+      byteData.buffer.asUint8List(),
+      fit: BoxFit.fill,
+      gaplessPlayback: true,
+      scale: 1.0,
+      repeat: ImageRepeat.noRepeat,
+      filterQuality: FilterQuality.none,
+      width: 120,
+      height: 120,
+    );
+    return _imageThumbView;*/
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
+      appBar: new AppBar(
+        title: const Text('Plugin example app'),
       ),
-      body: _getContent(),
+      body: imgs != null
+          ? GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4, mainAxisSpacing: 5, crossAxisSpacing: 5),
+          shrinkWrap: true,
+          itemCount: imgs.length,
+          itemBuilder: (context, position) {
+            return _itemImage(imgs[position]);
+          })
+          : Container(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _pickImages,
-        tooltip: 'Pick Images',
-        child: Icon(Icons.add),
+        heroTag: 1,
+        onPressed: checkPermission,
+        child: Icon(Icons.camera),
       ),
-    );
-  }
-}
-
-class AssetView extends StatefulWidget {
-  final Asset _asset;
-
-  AssetView(
-      this._asset, {
-        Key key,
-      }) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => AssetState(this._asset);
-}
-
-class AssetState extends State<AssetView> {
-  Asset _asset;
-  AssetState(this._asset);
-
-  @override
-  void initState() {
-    super.initState();
-    _loadImage();
-  }
-
-  void _loadImage() async {
-    await this._asset.requestThumbnail(300, 300, quality: 50);
-
-    if (this.mounted) {
-      setState(() {});
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Center(
-      child: CircularProgressIndicator(),
     );
   }
 }
