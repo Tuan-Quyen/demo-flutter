@@ -2,11 +2,10 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_app/models/local/MultiImageModel.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:async';
-import 'package:flutter_app/ultils/CheckPermission.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:image/image.dart' as im;
+import 'package:photo_manager/photo_manager.dart';
 
 class MultiImagePage extends StatefulWidget {
   @override
@@ -14,109 +13,155 @@ class MultiImagePage extends StatefulWidget {
 }
 
 class _MultiImagePageState extends State<MultiImagePage> {
-  static const platform = const MethodChannel('samples.flutter.io/files');
-  List<String> imgs = [];
+  String folderImage;
+  List<AssetPathEntity> listFolder;
+  List<MultiImageModel> imageList = [];
+  List<AssetEntity> assertEntityList = [];
+  List<String> _resultList = [];
+  int count = 0;
+  List<ImageProvider> _listProvider = [];
 
-  checkPermission() async {
-    final statusCamera = await CheckPermission().checkPermissionCamera();
-    final statusStorage = await CheckPermission().checkPermissionStorage();
-    final statusMicroPhone =
-    await CheckPermission().checkPermissionMicroPhone();
-    if (statusCamera && statusMicroPhone && statusStorage) {
-      _getImages();
-    } else {
-      setState(() {});
+  Future getFolderList() async {
+    listFolder = await PhotoManager.getImageAsset();
+    imageList.clear();
+    for (int i = 0; i < listFolder.length; i++) {
+      if (i != 0) {
+        addList(i);
+      }
     }
+    print(listFolder);
   }
 
-  Future<void> _getImages() async {
-    List images;
-    try {
-      final List result = await platform.invokeMethod('getImages');
-      images = result;
-    } on PlatformException catch (e) {
-      print(e.toString());
-    }
-    setState(() {
-      for (int i = 0; i < images.length; i++) {
-        if (images[i].toString().endsWith(".jpg")) {
-          imgs.add(images[i].toString());
-        } else if (images[i].toString().endsWith(".png")) {
-          imgs.add(images[i].toString());
-        }
+  Future addList(int i) async {
+    await listFolder[i].assetList.then((value) {
+      assertEntityList.addAll(value);
+      for (int i = 0; i < assertEntityList.length; i++) {
+        imageList.add(MultiImageModel(assertEntityList[i].id, false));
+        compressFileThumb(File(assertEntityList[i].id));
       }
-      print(imgs);
     });
   }
 
-  FutureBuilder _itemImage(String imgs) {
-    return FutureBuilder(
-      future: _loadThumb(imgs),
-      builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData) {
-          return snapshot.data; // image is ready
-        } else {
-          return new Center(
-            child: new CircularProgressIndicator(),
-          );
-        }
-      },
-    );
+  @override
+  void initState() {
+    super.initState();
+    getFolderList();
   }
 
-  Future<Image> _loadThumb(String imgs) async {
-    // read image
-    final Directory exDirectory = await getExternalStorageDirectory();
-    final Directory tempDirectory = await getTemporaryDirectory();
-    String exPath = '${exDirectory.path}/Pictures/' + imgs; //
-    String tempPath = '${tempDirectory.path}/' + imgs; //
-    print(File(exPath).toString());
-    Image image = Image.file(
-      File(exPath),
-      fit: BoxFit.fill,
-      width: 64,
-      height: 64,
-      repeat: ImageRepeat.noRepeat,
-      filterQuality: FilterQuality.low,
+  void onSelectImage(int position) {
+    if (imageList[position].isCheck) {
+      setState(() {
+        count--;
+        _resultList.removeAt(count);
+        imageList[position] =
+            MultiImageModel(imageList[position].filePath, false);
+      });
+    } else {
+      setState(() {
+        _resultList.add(assertEntityList[position].id);
+        count++;
+        imageList[position] =
+            MultiImageModel(imageList[position].filePath, true);
+      });
+    }
+    print(imageList[position].isCheck);
+    print(_resultList.length);
+  }
+
+  Future compressFileThumb(File file) async {
+    var result = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      minWidth: 120,
+      minHeight: 120,
+      quality: 30,
     );
-    return image;
-    /*thumbInts = await fileImage.readAsBytes();
-    ByteBuffer buffer = Uint8List.fromList(thumbInts).buffer;
-    ByteData byteData = new ByteData.view(buffer);
-    var _imageThumbView = new Image.memory(
-      byteData.buffer.asUint8List(),
-      fit: BoxFit.fill,
-      gaplessPlayback: true,
-      scale: 1.0,
-      repeat: ImageRepeat.noRepeat,
-      filterQuality: FilterQuality.none,
-      width: 120,
-      height: 120,
-    );
-    return _imageThumbView;*/
+    ImageProvider provider = MemoryImage(Uint8List.fromList(result));
+    setState(() {
+      _listProvider.add(provider);
+    });
+  }
+
+  GestureDetector _itemView(int position) {
+    return GestureDetector(
+        onTap: () {
+          onSelectImage(position);
+        },
+        child: Stack(children: <Widget>[
+          Image(
+            height: double.infinity,
+            width: double.infinity,
+            image: _listProvider[position],
+            fit: BoxFit.none,
+            filterQuality: FilterQuality.low,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.all(5),
+                width: 25,
+                height: 25,
+                child: imageList[position].isCheck
+                    ? FloatingActionButton(
+                        heroTag: position,
+                        mini: true,
+                        onPressed: () {
+                          setState(() {
+                            onSelectImage(position);
+                          });
+                        },
+                        child: Text(count.toString(),
+                            style: TextStyle(color: Colors.white)),
+                        backgroundColor: Colors.lightBlue)
+                    : FloatingActionButton(
+                        heroTag: position,
+                        onPressed: () {
+                          setState(() {
+                            onSelectImage(position);
+                          });
+                        },
+                        backgroundColor: Colors.transparent,
+                        shape: CircleBorder(
+                            side:
+                                BorderSide(color: Colors.lightBlue, width: 1)),
+                      ),
+              ),
+            ],
+          ),
+        ]));
   }
 
   @override
   Widget build(BuildContext context) {
+    print(assertEntityList.length);
     return Scaffold(
       appBar: new AppBar(
         title: const Text('Plugin example app'),
+        actions: <Widget>[
+          count != 0
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context, _resultList);
+                      },
+                      child: Icon(Icons.check, size: 30, color: Colors.white)),
+                )
+              : Container()
+        ],
       ),
-      body: imgs != null
+      body: _listProvider.length == imageList.length
           ? GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4, mainAxisSpacing: 5, crossAxisSpacing: 5),
-          shrinkWrap: true,
-          itemCount: imgs.length,
-          itemBuilder: (context, position) {
-            return _itemImage(imgs[position]);
-          })
-          : Container(),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 1,
-        onPressed: checkPermission,
-        child: Icon(Icons.camera),
-      ),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4, mainAxisSpacing: 5, crossAxisSpacing: 5),
+              shrinkWrap: true,
+              itemCount: imageList.length,
+              itemBuilder: (BuildContext, position) {
+                return _itemView(position);
+              })
+          : Center(
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:flutter_app/ultils/CheckPermission.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
 
-import 'models/local/FilePathImageVideo.dart';
+import 'models/local/CameraImageVideo.dart';
 
 List<CameraDescription> cameras;
 

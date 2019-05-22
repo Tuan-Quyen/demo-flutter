@@ -9,7 +9,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
-import 'models/local/FilePathImageVideo.dart';
+import 'models/local/CameraImageVideo.dart';
 
 class ImageTestPage extends StatefulWidget {
   ImageTestPage({Key key}) : super(key: key);
@@ -20,7 +20,7 @@ class ImageTestPage extends StatefulWidget {
 
 class _MyImageTestPageState extends State<ImageTestPage> {
   String currentSelected = "";
-  List<AssetEntity> preview = [];
+  List<String> preview = [];
   String videoPath;
   VideoPlayerController _controller;
   String path;
@@ -28,10 +28,18 @@ class _MyImageTestPageState extends State<ImageTestPage> {
   checkPermissionGallery() async {
     final statusStorage = await CheckPermission().checkPermissionStorage();
     if (statusStorage) {
-      _pickAsset(PickType.onlyImage);
+      _navigateImagePicker(context);
     } else {
       setState(() {});
     }
+  }
+
+  _navigateImagePicker(BuildContext context) async {
+    final result = await Navigator.pushNamed(context, "/MultiImagePage");
+    setState(() {
+      result != null ? preview.addAll(result) : null;
+      print(preview);
+    });
   }
 
   _navigateCamera(BuildContext context) async {
@@ -43,7 +51,7 @@ class _MyImageTestPageState extends State<ImageTestPage> {
         if (filePathImageVideo.isImage) {
           videoPath = null;
           _controller.dispose();
-          preview.add(AssetEntity(id: filePathImageVideo.filePath));
+          preview.add(filePathImageVideo.filePath);
         } else if (!filePathImageVideo.isImage) {
           preview.clear();
           videoPath = filePathImageVideo.filePath;
@@ -110,7 +118,7 @@ class _MyImageTestPageState extends State<ImageTestPage> {
     if (preview.length == 1) {
       return Container(
           child: Image.file(
-        File(preview[0].id),
+        File(preview[0]),
         filterQuality: FilterQuality.low,
         fit: BoxFit.fill,
       ));
@@ -124,7 +132,7 @@ class _MyImageTestPageState extends State<ImageTestPage> {
             itemBuilder: (BuildContext, position) {
               print(preview[position]);
               return FutureBuilder(
-                  future: testCompressFile(File(preview[position].id)),
+                  future: testCompressFile(File(preview[position])),
                   builder: (BuildContext, snapshot) {
                     if (snapshot.hasData) {
                       ImageProvider provider =
@@ -148,7 +156,7 @@ class _MyImageTestPageState extends State<ImageTestPage> {
       file.absolute.path,
       minWidth: 120,
       minHeight: 120,
-      quality: 30,
+      quality: 50,
     );
     return result;
   }
@@ -179,44 +187,5 @@ class _MyImageTestPageState extends State<ImageTestPage> {
         ],
       ),
     );
-  }
-
-  void _pickAsset(PickType type, {List<AssetPathEntity> pathList}) async {
-    List<AssetEntity> imgList = await PhotoPicker.pickAsset(
-      context: context,
-      themeColor: Colors.black,
-      padding: 5.0,
-      dividerColor: Colors.white,
-      disableColor: Colors.grey.shade300,
-      // the check box disable color
-      maxSelected: 100,
-      provider: I18nProvider.english,
-      // i18n provider ,default is chinese. , you can custom I18nProvider or use ENProvider()
-      rowCount: 3,
-      textColor: Colors.white,
-      thumbSize: 100,
-      sortDelegate: SortDelegate.common,
-      checkBoxBuilderDelegate: DefaultCheckBoxBuilderDelegate(
-        activeColor: Colors.white,
-        unselectedColor: Colors.grey.shade300,
-      ),
-      pickType: PickType.onlyImage,
-      photoPathList: pathList,
-    );
-
-    if (imgList == null) {
-      currentSelected = "not select item";
-    } else {
-      List<String> r = [];
-      for (var e in imgList) {
-        var file = await e.file;
-        r.add(file.absolute.path);
-      }
-      currentSelected = r.join("\n\n");
-      setState(() {
-        preview.addAll(imgList);
-      });
-    }
-    setState(() {});
   }
 }
