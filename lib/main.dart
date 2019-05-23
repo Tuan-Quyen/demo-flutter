@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_app/AsynchorousPage.dart';
-import 'package:flutter_app/NoAsynchorousPage.dart';
-import 'package:flutter_app/QuestionPage.dart';
-import 'package:flutter_app/LoginPage.dart';
-import 'package:flutter_app/ImageLoadPage.dart';
-import 'package:flutter_app/GalleryPage.dart';
-import 'package:flutter_app/CameraPage.dart';
-import 'package:flutter_app/MapPage.dart';
 import 'ImageTestPage.dart';
 import 'MultiImagePage.dart';
-import 'VideoPage.dart';
+import 'LoginPage.dart';
+import 'QuestionPage.dart';
+import 'ImageLoadPage.dart';
+import 'AsynchorousPage.dart';
+import 'NoAsynchorousPage.dart';
+import 'GalleryPage.dart';
+import 'CameraPage.dart';
+import 'MapPage.dart';
 
 main() async {
   SystemChrome.setPreferredOrientations(
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ImageTestPage(),
+        home: ImagePage(),
         routes: <String, WidgetBuilder>{
           '/LoginPage': (BuildContext context) => LoginPage(),
           '/QuestionPage': (BuildContext context) => QuestionPage(),

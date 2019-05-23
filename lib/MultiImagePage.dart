@@ -14,7 +14,7 @@ class MultiImagePage extends StatefulWidget {
 
 class _MultiImagePageState extends State<MultiImagePage> {
   String folderImage;
-  List<AssetPathEntity> listFolder;
+  List<AssetPathEntity> listFolder = [];
   List<MultiImageModel> imageList = [];
   List<AssetEntity> assertEntityList = [];
   List<String> _resultList = [];
@@ -29,14 +29,12 @@ class _MultiImagePageState extends State<MultiImagePage> {
         addList(i);
       }
     }
-    print(listFolder);
   }
 
   Future addList(int i) async {
     await listFolder[i].assetList.then((value) {
       assertEntityList.addAll(value);
       for (int i = 0; i < assertEntityList.length; i++) {
-        imageList.add(MultiImageModel(assertEntityList[i].id, false));
         compressFileThumb(File(assertEntityList[i].id));
       }
     });
@@ -49,36 +47,41 @@ class _MultiImagePageState extends State<MultiImagePage> {
   }
 
   void onSelectImage(int position) {
-    if (imageList[position].isCheck) {
-      setState(() {
-        count--;
-        _resultList.removeAt(count);
-        imageList[position] =
-            MultiImageModel(imageList[position].filePath, false);
-      });
-    } else {
-      setState(() {
-        _resultList.add(assertEntityList[position].id);
-        count++;
-        imageList[position] =
-            MultiImageModel(imageList[position].filePath, true);
-      });
+    if (this.mounted) {
+      if (imageList[position].isCheck) {
+        setState(() {
+          count--;
+          _resultList.removeAt(count);
+          imageList[position] =
+              MultiImageModel(imageList[position].filePath, false);
+        });
+      } else {
+        setState(() {
+          _resultList.add(imageList[position].filePath);
+          count++;
+          imageList[position] =
+              MultiImageModel(imageList[position].filePath, true);
+        });
+      }
     }
     print(imageList[position].isCheck);
     print(_resultList.length);
   }
 
   Future compressFileThumb(File file) async {
-    var result = await FlutterImageCompress.compressWithFile(
+    await FlutterImageCompress.compressWithFile(
       file.absolute.path,
       minWidth: 120,
       minHeight: 120,
       quality: 30,
-    );
-    ImageProvider provider = MemoryImage(Uint8List.fromList(result));
-    setState(() {
+    ).then((value) {
+      ImageProvider provider = MemoryImage(Uint8List.fromList(value));
       _listProvider.add(provider);
+      imageList.add(MultiImageModel(file.path, false));
     });
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   GestureDetector _itemView(int position) {
@@ -106,9 +109,11 @@ class _MultiImagePageState extends State<MultiImagePage> {
                         heroTag: position,
                         mini: true,
                         onPressed: () {
-                          setState(() {
-                            onSelectImage(position);
-                          });
+                          if (this.mounted) {
+                            setState(() {
+                              onSelectImage(position);
+                            });
+                          }
                         },
                         child: Text(count.toString(),
                             style: TextStyle(color: Colors.white)),
@@ -116,9 +121,11 @@ class _MultiImagePageState extends State<MultiImagePage> {
                     : FloatingActionButton(
                         heroTag: position,
                         onPressed: () {
-                          setState(() {
-                            onSelectImage(position);
-                          });
+                          if (this.mounted) {
+                            setState(() {
+                              onSelectImage(position);
+                            });
+                          }
                         },
                         backgroundColor: Colors.transparent,
                         shape: CircleBorder(
@@ -133,7 +140,6 @@ class _MultiImagePageState extends State<MultiImagePage> {
 
   @override
   Widget build(BuildContext context) {
-    print(assertEntityList.length);
     return Scaffold(
       appBar: new AppBar(
         title: const Text('Plugin example app'),

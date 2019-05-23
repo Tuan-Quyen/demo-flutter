@@ -4,24 +4,25 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ultils/CheckPermission.dart';
-import 'package:photo/photo.dart';
-import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 import 'models/local/CameraImageVideo.dart';
 
-class ImageTestPage extends StatefulWidget {
-  ImageTestPage({Key key}) : super(key: key);
+class ImagePage extends StatefulWidget {
+  ImagePage({Key key}) : super(key: key);
 
   @override
   _MyImageTestPageState createState() => new _MyImageTestPageState();
 }
 
-class _MyImageTestPageState extends State<ImageTestPage> {
+class _MyImageTestPageState extends State<ImagePage> {
   String currentSelected = "";
   List<String> preview = [];
+  List<ImageProvider> _listProvider = [];
+  Future<void> _initializeVideoPlayerFuture;
   String videoPath;
+
   VideoPlayerController _controller;
   String path;
 
@@ -29,37 +30,46 @@ class _MyImageTestPageState extends State<ImageTestPage> {
     final statusStorage = await CheckPermission().checkPermissionStorage();
     if (statusStorage) {
       _navigateImagePicker(context);
-    } else {
-      setState(() {});
     }
   }
 
   _navigateImagePicker(BuildContext context) async {
-    final result = await Navigator.pushNamed(context, "/MultiImagePage");
-    setState(() {
-      result != null ? preview.addAll(result) : null;
-      print(preview);
+    await Navigator.pushNamed(context, "/MultiImagePage").then((value) {
+      setState(() {
+        videoPath = null;
+        _controller = null;
+        _initializeVideoPlayerFuture = null;
+      });
+      List<String> list = [];
+      value != null ? list.addAll(value) : null;
+      for (int i = 0; i < list.length; i++) {
+        testCompressFile(File(list[i]));
+      }
     });
   }
 
   _navigateCamera(BuildContext context) async {
     final result = await Navigator.pushNamed(context, "/CameraPage");
     FilePathImageVideo filePathImageVideo;
-    setState(() {
-      result != null ? filePathImageVideo = result : filePathImageVideo = null;
-      if (filePathImageVideo != null) {
-        if (filePathImageVideo.isImage) {
+    result != null ? filePathImageVideo = result : filePathImageVideo = null;
+    if (filePathImageVideo != null) {
+      if (filePathImageVideo.isImage) {
+        setState(() {
           videoPath = null;
-          _controller.dispose();
-          preview.add(filePathImageVideo.filePath);
-        } else if (!filePathImageVideo.isImage) {
+          testCompressFile(File(filePathImageVideo.filePath));
+          _controller = null;
+          _initializeVideoPlayerFuture = null;
+        });
+      } else if (!filePathImageVideo.isImage) {
+        setState(() {
           preview.clear();
+          _listProvider.clear();
           videoPath = filePathImageVideo.filePath;
-          _controller = VideoPlayerController.file(File(videoPath))
-            ..initialize();
-        }
+          _controller = VideoPlayerController.file(File(videoPath));
+          _initializeVideoPlayerFuture = _controller.initialize();
+        });
       }
-    });
+    }
   }
 
   @override
@@ -71,44 +81,47 @@ class _MyImageTestPageState extends State<ImageTestPage> {
   Container display() {
     if (videoPath != null) {
       return Container(
-        child: _controller.value.initialized
-            ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _controller.value.isPlaying
-                        ? _controller.pause()
-                        : _controller.play();
-                  });
-                },
-                child: AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: Stack(
-                    children: <Widget>[
-                      VideoPlayer(_controller),
-                      Center(
-                        child: Visibility(
-                            visible: !_controller.value.isPlaying,
-                            child: FloatingActionButton(
-                              backgroundColor: Colors.white,
-                              child: Icon(
-                                Icons.play_arrow,
-                                color: Colors.black,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _controller.value.isPlaying
-                                      ? _controller.pause()
-                                      : _controller.play();
-                                });
-                              },
-                            )),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            : Container(),
-      );
+          child: _controller != null
+              ? FutureBuilder(
+                  future: _initializeVideoPlayerFuture,
+                  builder: (context, snapshot) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _controller.value.isPlaying
+                              ? _controller.pause()
+                              : _controller.play();
+                        });
+                      },
+                      child: AspectRatio(
+                        aspectRatio: _controller.value.aspectRatio,
+                        child: Stack(
+                          children: <Widget>[
+                            VideoPlayer(_controller),
+                            Center(
+                              child: Visibility(
+                                  visible: !_controller.value.isPlaying,
+                                  child: FloatingActionButton(
+                                    backgroundColor: Colors.white,
+                                    child: Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.black,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        _controller.value.isPlaying
+                                            ? _controller.pause()
+                                            : _controller.play();
+                                      });
+                                    },
+                                  )),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  })
+              : Container());
     } else {
       return displayImage();
     }
@@ -130,35 +143,30 @@ class _MyImageTestPageState extends State<ImageTestPage> {
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4, crossAxisSpacing: 5, mainAxisSpacing: 5),
             itemBuilder: (BuildContext, position) {
-              print(preview[position]);
-              return FutureBuilder(
-                  future: testCompressFile(File(preview[position])),
-                  builder: (BuildContext, snapshot) {
-                    if (snapshot.hasData) {
-                      ImageProvider provider =
-                          MemoryImage(Uint8List.fromList(snapshot.data));
-                      return Image(
-                        image: provider,
-                        fit: BoxFit.fill,
-                        filterQuality: FilterQuality.low,
-                      );
-                    } else {
-                      return Container();
-                    }
-                  });
+              return Image(
+                image: _listProvider[position],
+                fit: BoxFit.fill,
+                filterQuality: FilterQuality.low,
+              );
             }),
       );
     }
   }
 
   Future<List<int>> testCompressFile(File file) async {
-    var result = await FlutterImageCompress.compressWithFile(
+    await FlutterImageCompress.compressWithFile(
       file.absolute.path,
       minWidth: 120,
       minHeight: 120,
       quality: 50,
-    );
-    return result;
+    ).then((value) {
+      ImageProvider provider = MemoryImage(Uint8List.fromList(value));
+      _listProvider.add(provider);
+      preview.add(file.path);
+    });
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   @override
