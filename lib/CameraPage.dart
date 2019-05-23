@@ -30,7 +30,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   @override
   void initState() {
     super.initState();
-    //initCamera();
     _futureCamera();
     checkPermission();
   }

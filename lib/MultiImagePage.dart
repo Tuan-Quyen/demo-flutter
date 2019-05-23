@@ -142,7 +142,7 @@ class _MultiImagePageState extends State<MultiImagePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: const Text('Plugin example app'),
+        title: const Text('Gallery Image'),
         actions: <Widget>[
           count != 0
               ? Padding(
