@@ -59,8 +59,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 
   void initCamera(int cameraType) {
-    _controller = CameraController(cameras[cameraType], ResolutionPreset.high,
-        enableAudio: isVideo);
+    _controller = CameraController(cameras[cameraType], ResolutionPreset.medium,
+        enableAudio: true);
     _initializeControllerFuture = _controller.initialize();
   }
 
@@ -87,6 +87,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           DateTime.now().millisecondsSinceEpoch.toString();
       videoPath = '$videoDirectory/VID_${currentTime}.mp4';
     }
+    _controller.prepareForVideoRecording();
     await _controller.startVideoRecording(videoPath);
   }
 
@@ -163,7 +164,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               ),
             ),
             Container(
-              //margin: const EdgeInsets.only(left: 40, right: 40),
               child: FloatingActionButton(
                 heroTag: 1,
                 backgroundColor: isVideo ? Colors.red : Colors.white,

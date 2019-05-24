@@ -32,7 +32,6 @@ dependencies:
   video_player: ^0.10.1
   thumbnails: ^1.0.1
   photo_manager: ^0.3.4
-  path: ^1.6.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

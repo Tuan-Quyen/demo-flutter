@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/widgets/CustomLoadVideo.dart';
 import 'package:video_player/video_player.dart';
 
 import 'models/local/CameraImageVideo.dart';
@@ -38,6 +39,12 @@ class _PreviewPageState extends State<PreviewPage> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
@@ -45,45 +52,11 @@ class _PreviewPageState extends State<PreviewPage> {
         fit: StackFit.expand,
         children: <Widget>[
           Center(
-              child: _controller != null
+              child: !widget.filePathImageVideo.isImage
                   ? FutureBuilder(
                       future: _initializeVideoPlayerFuture,
                       builder: (context, snapshot) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _controller.value.isPlaying
-                                  ? _controller.pause()
-                                  : _controller.play();
-                            });
-                          },
-                          child: AspectRatio(
-                            aspectRatio: _controller.value.aspectRatio,
-                            child: Stack(
-                              children: <Widget>[
-                                VideoPlayer(_controller),
-                                Center(
-                                  child: Visibility(
-                                      visible: !_controller.value.isPlaying,
-                                      child: FloatingActionButton(
-                                        backgroundColor: Colors.white,
-                                        child: Icon(
-                                          Icons.play_arrow,
-                                          color: Colors.black,
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _controller.value.isPlaying
-                                                ? _controller.pause()
-                                                : _controller.play();
-                                          });
-                                        },
-                                      )),
-                                )
-                              ],
-                            ),
-                          ),
-                        );
+                        return CustomLoadVideo(_controller);
                       })
                   : Image.file(
                       File(widget.filePathImageVideo.filePath),
@@ -97,6 +70,7 @@ class _PreviewPageState extends State<PreviewPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 50),
                 child: RaisedButton(
+                  shape: CircleBorder(),
                   onPressed: () {
                     Navigator.pop(context);
                   },

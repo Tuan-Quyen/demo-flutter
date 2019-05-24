@@ -40,6 +40,22 @@ class _MultiImagePageState extends State<MultiImagePage> {
     });
   }
 
+  Future compressFileThumb(File file) async {
+    await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      minWidth: 120,
+      minHeight: 120,
+      quality: 80,
+    ).then((value) {
+      ImageProvider provider = MemoryImage(Uint8List.fromList(value));
+      _listProvider.add(provider);
+      imageList.add(MultiImageModel(file.path, false));
+    });
+    if (this.mounted) {
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -66,22 +82,6 @@ class _MultiImagePageState extends State<MultiImagePage> {
     }
     print(imageList[position].isCheck);
     print(_resultList.length);
-  }
-
-  Future compressFileThumb(File file) async {
-    await FlutterImageCompress.compressWithFile(
-      file.absolute.path,
-      minWidth: 120,
-      minHeight: 120,
-      quality: 30,
-    ).then((value) {
-      ImageProvider provider = MemoryImage(Uint8List.fromList(value));
-      _listProvider.add(provider);
-      imageList.add(MultiImageModel(file.path, false));
-    });
-    if (this.mounted) {
-      setState(() {});
-    }
   }
 
   GestureDetector _itemView(int position) {

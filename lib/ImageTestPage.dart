@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/ultils/CheckPermission.dart';
+import 'package:flutter_app/widgets/CustomLoadVideo.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -49,7 +50,7 @@ class _MyImageTestPageState extends State<ImagePage> {
       List<String> list = [];
       value != null ? list.addAll(value) : null;
       for (int i = 0; i < list.length; i++) {
-        testCompressFile(File(list[i]), true);
+        testCompressFile(File(list[i]), null, true);
       }
     });
   }
@@ -63,7 +64,7 @@ class _MyImageTestPageState extends State<ImagePage> {
         setState(() {
           _controller = null;
           _initializeVideoPlayerFuture = null;
-          testCompressFile(File(filePathImageVideo.filePath), true);
+          testCompressFile(File(filePathImageVideo.filePath), null, true);
         });
       } else if (!filePathImageVideo.isImage) {
         setState(() {
@@ -88,20 +89,26 @@ class _MyImageTestPageState extends State<ImagePage> {
         thumbnailFolder: filePath,
         videoFile: path,
         imageType: ThumbFormat.PNG,
-        quality: 50);
-    testCompressFile(File(thumb), false);
+        quality: 80);
+
+    testCompressFile(File(thumb), path, false);
   }
 
-  Future<List<int>> testCompressFile(File file, bool isImage) async {
+  Future<List<int>> testCompressFile(
+      File file, String orgirinPath, bool isImage) async {
     await FlutterImageCompress.compressWithFile(
       file.absolute.path,
       minWidth: 120,
       minHeight: 120,
-      quality: 50,
+      quality: 80,
     ).then((value) {
       ImageProvider provider = MemoryImage(Uint8List.fromList(value));
       _listProvider.add(provider);
-      preview.add(FilePathImageVideo(file.path, isImage));
+      if (!isImage) {
+        preview.add(FilePathImageVideo(orgirinPath, isImage));
+      } else {
+        preview.add(FilePathImageVideo(file.path, isImage));
+      }
     });
     if (this.mounted) {
       setState(() {});
@@ -115,41 +122,7 @@ class _MyImageTestPageState extends State<ImagePage> {
               ? FutureBuilder(
                   future: _initializeVideoPlayerFuture,
                   builder: (context, snapshot) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _controller.value.isPlaying
-                              ? _controller.pause()
-                              : _controller.play();
-                        });
-                      },
-                      child: AspectRatio(
-                        aspectRatio: _controller.value.aspectRatio,
-                        child: Stack(
-                          children: <Widget>[
-                            VideoPlayer(_controller),
-                            Center(
-                              child: Visibility(
-                                  visible: !_controller.value.isPlaying,
-                                  child: FloatingActionButton(
-                                    backgroundColor: Colors.white,
-                                    child: Icon(
-                                      Icons.play_arrow,
-                                      color: Colors.black,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        _controller.value.isPlaying
-                                            ? _controller.pause()
-                                            : _controller.play();
-                                      });
-                                    },
-                                  )),
-                            )
-                          ],
-                        ),
-                      ),
-                    );
+                    return CustomLoadVideo(_controller);
                   })
               : Image.file(
                   File(preview[0].filePath),
