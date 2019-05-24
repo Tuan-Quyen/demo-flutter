@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -34,7 +33,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   int counter = 0;
   String _appBadgeSupported = 'Unknown';
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
@@ -43,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     firebaseCloudMessaging_Listeners();
-
+    initPlatformState();
   }
 
   initPlatformState() async {
@@ -67,16 +65,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void firebaseCloudMessaging_Listeners() {
-
     if (Platform.isIOS) iOS_Permission();
-
-    _firebaseMessaging.getToken().then((token){
+    _firebaseMessaging.getToken().then((token) {
       print(token);
     });
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
-
         if (Platform.isIOS) {
           var notiData = NotificationIOS.fromJson(message);
           setState(() {
@@ -88,18 +83,14 @@ class _MyHomePageState extends State<MyHomePage> {
             counter = int.tryParse(notiData.data.badge);
           });
         }
-
         FlutterAppBadger.updateBadgeCount(counter);
       },
-
       onResume: (Map<String, dynamic> message) async {
         ontapBannerNotification(message);
       },
-
       onLaunch: (Map<String, dynamic> message) async {
         ontapBannerNotification(message);
       },
-
     );
 
     _firebaseMessaging.getToken();
@@ -108,28 +99,31 @@ class _MyHomePageState extends State<MyHomePage> {
   void ontapBannerNotification(Map<String, dynamic> message) {
     if (Platform.isIOS) {
       var notiIOSData = NotificationIOS.fromJson(message);
-      var notiData = NotificationData.storeData(notiIOSData.title, notiIOSData.overview, notiIOSData.aps.badge);
+      var notiData = NotificationData.storeData(
+          notiIOSData.title, notiIOSData.overview, notiIOSData.aps.badge);
       _navigateToItemDetail(notiData);
     } else {
       var notiAndroidData = NotificationAndroid.fromJson(message);
-      var notiData = NotificationData.storeData(notiAndroidData.data.title, notiAndroidData.data.overview, int.tryParse(notiAndroidData.data.badge));
+      var notiData = NotificationData.storeData(
+          notiAndroidData.data.title,
+          notiAndroidData.data.overview,
+          int.tryParse(notiAndroidData.data.badge));
       _navigateToItemDetail(notiData);
     }
   }
 
   void iOS_Permission() {
-
     _firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(sound: true, badge: true, alert: true)
-    );
-
-    _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+        IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
       print("Settings registered: $settings");
     });
   }
 
   void _navigateToItemDetail(NotificationData message) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => DetailPage(message)));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => DetailPage(message)));
   }
 
   @override
@@ -141,45 +135,52 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           new Stack(
             children: <Widget>[
-              new IconButton(icon: Icon(Icons.notifications), onPressed: () {
-                setState(() {
-                  counter = 0;
-                  FlutterAppBadger.removeBadge();
-                });
-              }),
-              counter != 0 ? new Positioned(
-                right: 11,
-                top: 11,
-                child: new Container(
-                  padding: EdgeInsets.all(2),
-                  decoration: new BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  constraints: BoxConstraints(
-                    minWidth: 14,
-                    minHeight: 14,
-                  ),
-                  child: Text(
-                    '$counter',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 8,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ) : new Container()
+              new IconButton(
+                  icon: Icon(Icons.notifications),
+                  onPressed: () {
+                    setState(() {
+                      counter = 0;
+                      FlutterAppBadger.removeBadge();
+                    });
+                  }),
+              counter != 0
+                  ? new Positioned(
+                      right: 11,
+                      top: 11,
+                      child: new Container(
+                        padding: EdgeInsets.all(2),
+                        decoration: new BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: BoxConstraints(
+                          minWidth: 14,
+                          minHeight: 14,
+                        ),
+                        child: Text(
+                          '$counter',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : new Container()
             ],
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        print("Increment Counter");
-        setState(() {
-          counter++;
-        });
-      }, child: Icon(Icons.add),),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print("Increment Counter");
+          setState(() {
+            counter++;
+          });
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
