@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'HomePage.dart';
 
@@ -9,7 +10,9 @@ void main() {
     runApp(MyApp());
   });
 }
+
 class MyApp extends StatelessWidget {
+  final CounterBloc _counterBloc = CounterBloc();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,9 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: HomePage()
-    );
+        home: BlocProvider<CounterBloc>(
+          bloc: _counterBloc,
+          child: HomePage(),
+        ),);
   }
 }
