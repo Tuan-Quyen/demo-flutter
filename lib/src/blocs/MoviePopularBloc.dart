@@ -7,12 +7,10 @@ class MoviesBloc {
   final _repository = Repository();
   final _moviesFetcher = PublishSubject<ItemModel>();
 
-  Observable<ItemModel> get allMovies =>
-      _moviesFetcher.stream.transform(_transform);
+  Observable<ItemModel> get allMovies => _moviesFetcher.stream.transform(_transform);
 
-  var _transform = StreamTransformer<ItemModel, ItemModel>.fromHandlers(
-      handleData: (data, sink) {
-    for (int i = 0; i < 3; i++) {
+  var _transform = StreamTransformer<ItemModel,ItemModel>.fromHandlers(handleData: (data,sink){
+    for(int i=0;i<3;i++){
       data.results[i].title = "Stream Transformer Test";
     }
     sink.add(data);

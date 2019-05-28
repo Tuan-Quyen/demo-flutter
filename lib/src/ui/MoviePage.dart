@@ -47,7 +47,7 @@ class _MoviePageState extends State<MoviePage> {
               return Column(
                 children: <Widget>[
                   Image.network(
-                    'https://image.tmdb.org/t/p/w185${_listMovie[index].posterPath}',
+                    'https://image.tmdb.org/t/p/w185${_listMovie[index].poster_path}',
                   ),
                   Center(
                     child: Text(

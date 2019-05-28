@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app/src/ui/MoviePage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:flutter_app/src/ui/HomePage.dart';
+
 void main() {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
