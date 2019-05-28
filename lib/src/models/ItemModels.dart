@@ -17,6 +17,7 @@ class ItemModel {
   factory ItemModel.fromJson(Map<String, dynamic> json) => _$ItemModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ItemModelToJson(this);
+
 /*ItemModel.fromJson(Map<String, dynamic> parsedJson) {
     print(parsedJson['results'].length);
     _page = parsedJson['page'];

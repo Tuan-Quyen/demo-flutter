@@ -44,15 +44,28 @@ class _MoviePageState extends State<MoviePage> {
         SliverGrid(
           delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-              return Image.network(
-                'https://image.tmdb.org/t/p/w185${_listMovie[index].poster_path}',
-                fit: BoxFit.fill,
+              return Column(
+                children: <Widget>[
+                  Image.network(
+                    'https://image.tmdb.org/t/p/w185${_listMovie[index].poster_path}',
+                  ),
+                  Center(
+                    child: Text(
+                      _listMovie[index].title,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  )
+                ],
               );
             },
             childCount: _listMovie.length,
           ),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5),
+              crossAxisCount: 2,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              childAspectRatio: MediaQuery.of(context).size.width /
+                  (MediaQuery.of(context).size.height / 1.1)),
         ),
         SliverToBoxAdapter(
           child: Center(
