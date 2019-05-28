@@ -10,8 +10,8 @@ part of 'package:flutter_app/src/models/ItemModels.dart';
 ItemModel _$ItemModelFromJson(Map<String, dynamic> json) {
   return ItemModel(
       page: json['page'] as int,
-      totalResults: json['total_results'] as int,
-      totalPages: json['total_pages'] as int,
+      total_results: json['total_results'] as int,
+      total_pages: json['total_pages'] as int,
       results: (json['results'] as List)
           ?.map((e) => e == null
               ? null
@@ -21,7 +21,7 @@ ItemModel _$ItemModelFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$ItemModelToJson(ItemModel instance) => <String, dynamic>{
       'page': instance.page,
-      'total_results': instance.totalResults,
-      'total_pages': instance.totalPages,
+      'total_results': instance.total_results,
+      'total_pages': instance.total_pages,
       'results': instance.results
     };

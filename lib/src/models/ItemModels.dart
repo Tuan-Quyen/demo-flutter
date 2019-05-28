@@ -1,10 +1,9 @@
 import 'ResultModels.dart';
 import 'package:json_annotation/json_annotation.dart';
-
 part 'package:flutter_app/src/models/bash/ItemModels.g.dart';
 
 @JsonSerializable()
-class ItemModel {
+class ItemModel{
   @JsonKey(name: "page")
   int page;
   @JsonKey(name: "total_results")
@@ -20,6 +19,7 @@ class ItemModel {
       _$ItemModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ItemModelToJson(this);
+
 
 /*ItemModel.fromJson(Map<String, dynamic> parsedJson) {
     print(parsedJson['results'].length);
