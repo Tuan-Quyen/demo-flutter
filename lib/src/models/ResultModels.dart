@@ -5,49 +5,49 @@ part 'package:flutter_app/src/models/bash/ResultModels.g.dart';
 @JsonSerializable()
 class ResultModels {
   @JsonKey(name: "vote_count")
-  int vote_count;
+  int voteCount;
   @JsonKey(name: "id")
   int id;
   @JsonKey(name: "video")
   bool video;
   @JsonKey(name: "vote_average")
-  var vote_average;
+  var voteAverage;
   @JsonKey(name: "title")
   String title;
   @JsonKey(name: "popularity")
   double popularity;
   @JsonKey(name: "poster_path")
-  String poster_path;
+  String posterPath;
   @JsonKey(name: "original_language")
-  String original_language;
+  String originalLanguage;
   @JsonKey(name: "original_title")
-  String original_title;
+  String originalTitle;
   @JsonKey(name: "genre_ids")
-  List<int> genre_ids = [];
+  List<int> genreIds = [];
   @JsonKey(name: "backdrop_path")
-  String backdrop_path;
+  String backdropPath;
   @JsonKey(name: "adult")
   bool adult;
   @JsonKey(name: "overview")
   String overview;
   @JsonKey(name: "release_date")
-  String release_date;
+  String releaseDate;
 
   ResultModels(
-      {this.vote_count,
+      {this.voteCount,
       this.id,
       this.video,
-      this.vote_average,
+      this.voteAverage,
       this.title,
       this.popularity,
-      this.poster_path,
-      this.original_language,
-      this.original_title,
-      this.genre_ids,
-      this.backdrop_path,
+      this.posterPath,
+      this.originalLanguage,
+      this.originalTitle,
+      this.genreIds,
+      this.backdropPath,
       this.adult,
       this.overview,
-      this.release_date});
+      this.releaseDate});
 
   factory ResultModels.fromJson(Map<String, dynamic> json) =>
       _$ResultModelsFromJson(json);
