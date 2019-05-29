@@ -46,7 +46,7 @@ class _MoviePageState extends State<MoviePage> {
               } else if (state is MovieErrorState) {
                 return Center(
                   child: Text(
-                    "Error",
+                    state.error,
                     style: TextStyle(color: Colors.red, fontSize: 20),
                   ),
                 );

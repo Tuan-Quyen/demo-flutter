@@ -12,6 +12,9 @@ class MovieFetchedState extends MovieState{
   MovieFetchedState({this.results}) : assert(results != null);
 }
 
-class MovieErrorState extends MovieState{}
+class MovieErrorState extends MovieState{
+  final Error error;
+  MovieErrorState({this.error});
+}
 
 class MovieEmptyState extends MovieState{}

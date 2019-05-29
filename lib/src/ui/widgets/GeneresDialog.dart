@@ -9,7 +9,7 @@ class GeneresDialog {
     _list.add(GeneresModels("top_rated", "Top rated"));
     _list.add(GeneresModels("upcoming", "Up coming"));
     _list.add(GeneresModels("now_playing", "Now Playing"));
-    _list.add(GeneresModels("lasted", "Lasted"));
+    _list.add(GeneresModels("latest", "Lastest"));
   }
 
   Widget buildPopupMenu(void choiceAction(GeneresModels choice)) {
