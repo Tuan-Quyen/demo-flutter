@@ -28,7 +28,7 @@ class MoviesBloc extends Bloc<MovieEvent, MovieState> {
           yield MovieFetchedState(results: movies);
         }
       } catch (_) {
-        yield MovieErrorState(error: );
+        yield MovieErrorState();
       }
     }
   }
