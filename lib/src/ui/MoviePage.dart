@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app/src/blocs/MoviePopularBloc.dart';
+import 'package:flutter_app/src/blocs/MovieRxBloc.dart';
 import 'package:flutter_app/src/models/ItemModels.dart';
 import 'package:flutter_app/src/models/ResultModels.dart';
+import 'package:flutter_app/src/blocs/MovieStreamBloc.dart';
 
 class MoviePage extends StatefulWidget {
   @override
@@ -12,19 +13,20 @@ class _MoviePageState extends State<MoviePage> {
   var _listController = ScrollController();
   int _page = 1;
   List<ResultModels> _listMovie = [];
+  MoviesStreamBloc bloc;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Movie Popular",
+          "Movie Popular with Rxdart",
           style: TextStyle(color: Colors.white, fontSize: 20),
         ),
         backgroundColor: Colors.black87,
       ),
       body: StreamBuilder(
-        stream: bloc.allMovies,
+        stream: bloc.movieStream,
         builder: (context, AsyncSnapshot<ItemModel> snapshot) {
           if (snapshot.hasData) {
             _listMovie.addAll(snapshot.data.results);
@@ -97,6 +99,7 @@ class _MoviePageState extends State<MoviePage> {
 
   @override
   void initState() {
+    bloc = MoviesStreamBloc();
     bloc.fetchAllMovies(_page);
     _listController.addListener(_listener);
     super.initState();

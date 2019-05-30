@@ -18,16 +18,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    CounterBloc counterBloc = CounterBloc();
     return MaterialApp(
         title: 'Movie Page',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: BlocProvider(bloc: counterBloc, child: HomePage()),
+        home: HomePage(),
         routes: <String, WidgetBuilder>{
-          '/HomePage': (BuildContext context) =>
-              BlocProvider(bloc: counterBloc, child: HomePage()),
+          '/HomePage': (BuildContext context) => HomePage(),
           '/MoviePage': (BuildContext context) => MoviePage(),
         });
   }

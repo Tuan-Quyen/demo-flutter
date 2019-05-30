@@ -1,20 +1,23 @@
 import 'dart:async';
-import 'package:http/http.dart' show Client;
-import 'dart:convert';
 import '../models/ItemModels.dart';
+import 'package:dio/dio.dart';
 
 class ApiProvider {
-  Client client = Client();
-  final _apiKey = '4d560f483fdb51909f54bc37635d7a2c';
-  final _baseUrl = 'http://api.themoviedb.org/3/movie';
+  static BaseOptions options = new BaseOptions(
+      baseUrl: "http://api.themoviedb.org/3/movie/",
+      connectTimeout: 5000,
+      receiveTimeout: 3000);
+  Dio dio = Dio(options);
 
   Future<ItemModel> fetchMovieList(int _page) async {
-    print("entered");
-    final response = await client
-        .get("$_baseUrl/popular?api_key=$_apiKey&page=$_page");
+    Map<String, String> map = {
+      "api_key": "4d560f483fdb51909f54bc37635d7a2c",
+      "page": _page.toString()
+    };
+    final response = await dio.get("popular", queryParameters: map);
     if (response.statusCode == 200) {
-      print("reponse : " + response.body.toString());
-      return ItemModel.fromJson(json.decode(response.body));
+      print("reponse : " + response.data.toString());
+      return ItemModel.fromJson(response.data);
     } else {
       throw Exception('Failed to load post');
     }

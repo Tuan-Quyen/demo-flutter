@@ -1,7 +1,5 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/src/blocs/CounterBloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +9,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   CounterBloc _counterBloc;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,11 +71,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
   @override
   void initState() {
     super.initState();
-    _counterBloc = BlocProvider.of<CounterBloc>(context);
+    _counterBloc = CounterBloc();
   }
 
   @override
@@ -84,23 +82,4 @@ class _HomePageState extends State<HomePage> {
     _counterBloc.dispose();
     super.dispose();
   }
-}
-
-enum CounterEvent { increment, decrement }
-
-class CounterBloc extends Bloc<CounterEvent, int> {
-  @override
-  Stream<int> mapEventToState(CounterEvent event) async* {
-    switch (event) {
-      case CounterEvent.decrement:
-        yield currentState - 1;
-        break;
-      case CounterEvent.increment:
-        yield currentState + 1;
-        break;
-    }
-  }
-
-  @override
-  int get initialState => 105;
 }

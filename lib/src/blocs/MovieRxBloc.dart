@@ -3,7 +3,7 @@ import 'package:rxdart/rxdart.dart';
 import '../models/ItemModels.dart';
 import 'dart:async';
 
-class MoviesBloc {
+class MoviesRxBloc {
   final _repository = Repository();
   final _moviesFetcher = PublishSubject<ItemModel>();
 
@@ -27,5 +27,3 @@ class MoviesBloc {
     _moviesFetcher.close();
   }
 }
-
-final bloc = MoviesBloc();
