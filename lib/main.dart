@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app/src/ui/HomePage.dart';
+import 'package:flutter_app/src/ui/LoginPage.dart';
 import 'package:flutter_app/src/ui/MoviePage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations(
@@ -16,15 +19,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Movie Page',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      /*home: BlocProvider<CounterBloc>(
+        title: 'Movie Page',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        /*home: BlocProvider<CounterBloc>(
           bloc: _counterBloc,
           child: HomePage(),
         ),*/
-      home: MoviePage(),
-    );
+        home: LoginPage(),
+        routes: <String, WidgetBuilder>{
+          '/LoginPage': (BuildContext context) => LoginPage(),
+          '/MoviePage': (BuildContext context) => MoviePage(),
+        });
   }
 }

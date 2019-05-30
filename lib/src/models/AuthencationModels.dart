@@ -6,17 +6,17 @@ class AuthencationModels{
   final String expiredAt;
   final String requestToken;
 
-  AuthencationModels(this.success, this.requestToken, this.expiredAt);
+  AuthencationModels({this.success, this.requestToken, this.expiredAt});
 
-  factory AuthencationModels.fromJson(Map<String, dynamic> json) => new Welcome(
+  factory AuthencationModels.fromJson(Map<String, dynamic> json) => new AuthencationModels(
     success: json["success"],
-    expiresAt: json["expires_at"],
+    expiredAt: json["expires_at"],
     requestToken: json["request_token"],
   );
 
   Map<String, dynamic> toJson() => {
     "success": success,
-    "expires_at": expiresAt,
+    "expires_at": expiredAt,
     "request_token": requestToken,
   };
 }
