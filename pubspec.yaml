@@ -25,8 +25,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   build_runner: ^1.0.0
-  image_picker: ^0.6.0+3
-  flutter_advanced_networkimage: ^0.4.15
+  firebase_core: ^0.4.0+3
+  firebase_database: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -45,14 +45,6 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-  - lib/images/butterfly-icon.png
-  - lib/images/flutter-icon.png
-  - lib/images/ic_vote.png
-  - lib/images/ic_answers_non_zero.png
-  - lib/images/ic_no_answers.png
-  - lib/images/ic_answers_accepted.png
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
 
