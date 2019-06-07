@@ -5,6 +5,7 @@ import 'dart:io';
 import 'message_detail.dart';
 import 'model/NotificationBase.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void main() => runApp(MyApp());
 
@@ -36,12 +37,24 @@ class _MyHomePageState extends State<MyHomePage> {
   int counter = 0;
   String _appBadgeSupported = 'Unknown';
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
     super.initState();
     firebaseCloudMessaging_Listeners();
     initPlatformState();
+    initNotification();
+  }
+
+  initNotification() {
+    var initializationSettingsAndroid =
+        new AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   initPlatformState() async {
@@ -72,6 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
+        _showNotificationWithDefaultSound(
+            message['notification']['title'], message['notification']['body']);
         if (Platform.isIOS) {
           var notiData = NotificationIOS.fromJson(message);
           setState(() {
@@ -87,13 +102,15 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       onResume: (Map<String, dynamic> message) async {
         ontapBannerNotification(message);
+        _showNotificationWithDefaultSound(
+            message['notification']['title'], message['notification']['body']);
       },
       onLaunch: (Map<String, dynamic> message) async {
         ontapBannerNotification(message);
+        _showNotificationWithDefaultSound(
+            message['notification']['title'], message['notification']['body']);
       },
     );
-
-    _firebaseMessaging.getToken();
   }
 
   void ontapBannerNotification(Map<String, dynamic> message) {
@@ -124,6 +141,21 @@ class _MyHomePageState extends State<MyHomePage> {
   void _navigateToItemDetail(NotificationData message) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => DetailPage(message)));
+  }
+
+  Future _showNotificationWithDefaultSound(String title, String body) async {
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'fcm_default_channel', title, body,
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      "hihihi",
+      "gagagagag",
+      platformChannelSpecifics,
+    );
   }
 
   @override
