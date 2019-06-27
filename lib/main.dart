@@ -1,18 +1,16 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_app/AsynchorousPage.dart';
-import 'package:flutter_app/NoAsynchorousPage.dart';
 import 'package:flutter_app/QuestionPage.dart';
 import 'package:flutter_app/LoginPage.dart';
-import 'package:flutter_app/ImageLoadPage.dart';
 import 'package:flutter_app/GalleryPage.dart';
 import 'package:flutter_app/CameraPage.dart';
 import 'package:flutter_app/MapPage.dart';
+import 'package:flutter_app/SlideAnimation.dart';
 
 List<CameraDescription> cameras;
 
-Future<void> main() async{
+Future<void> main() async {
   cameras = await availableCameras();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
@@ -28,16 +26,27 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: GalleryPage(),
-        routes: <String, WidgetBuilder>{
-          '/LoginPage': (BuildContext context) => LoginPage(),
-          '/QuestionPage': (BuildContext context) => QuestionPage(),
-          '/ImageLoadPage': (BuildContext context) => ImageLoadPage(),
-          '/AsynchorousPage': (BuildContext context) => AsynchorousPage(),
-          '/NoAsynchorousPage': (BuildContext context) => NoAsynchorousPage(),
-          '/GalleryPage': (BuildContext context) => GalleryPage(),
-          '/CameraPage': (BuildContext context) => TakePictureScreen(camera: cameras.first,),
-          '/MapPage': (BuildContext context) => MapPage(),
-        });
+        home: LoginPage(),
+        onGenerateRoute: (RouteSettings settings) {
+          switch (settings.name) {
+            case '/LoginPage':
+              return SlideRightRoute(widget: LoginPage());
+              break;
+            case '/QuestionPage':
+              return SlideRightRoute(widget: QuestionPage());
+              break;
+            case '/CameraPage':
+              return SlideRightRoute(
+                  widget: TakePictureScreen(camera: cameras.first));
+              break;
+            case '/GalleryPage':
+              return SlideRightRoute(widget: GalleryPage());
+              break;
+            case '/MapPage':
+              return SlideRightRoute(widget: MapPage());
+              break;
+          }
+        },
+    );
   }
 }

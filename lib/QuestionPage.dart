@@ -15,21 +15,25 @@ class QuestionPage extends StatefulWidget {
   _MyQuestionPageState createState() => _MyQuestionPageState();
 }
 
-class _MyQuestionPageState extends State<QuestionPage> {
+class _MyQuestionPageState extends State<QuestionPage>
+    with TickerProviderStateMixin<QuestionPage> {
   bool hasLeft = false, hasRight = false, isLoading = false, isFirstLoad = true;
   int _page = 1;
   List<ResponseQuestion> _questionList = new List();
   var _scrollController = new ScrollController();
   var refreshKey = GlobalKey<RefreshIndicatorState>();
+  AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+        value: 20, lowerBound: 0, upperBound: 100.0, vsync: this);
     getQuestionData(false);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        if(this.mounted) {
+        if (this.mounted) {
           setState(() {
             _page++;
             getQuestionData(false);
@@ -46,16 +50,16 @@ class _MyQuestionPageState extends State<QuestionPage> {
   }
 
   getQuestionData(bool isRefresh) async {
-    if(this.mounted) {
+    if (this.mounted) {
       setState(() {
         isLoading = true;
       });
     }
     if (isRefresh) _page = 1;
-    final res = await http.get(BaseUrl.questionRequest(_page,"hot"));
+    final res = await http.get(BaseUrl.questionRequest(_page, "hot"));
     if (res.statusCode == 200) {
       var rest = json.decode(res.body)["items"] as List;
-      if(this.mounted) {
+      if (this.mounted) {
         setState(() {
           if (isRefresh) _questionList.clear();
           isLoading = false;
@@ -63,6 +67,7 @@ class _MyQuestionPageState extends State<QuestionPage> {
           _questionList.addAll(rest
               .map<ResponseQuestion>((json) => ResponseQuestion.fromJson(json))
               .toList());
+          _controller.animateTo(100,curve: Curves.easeIn, duration: Duration(seconds: 1));
         });
       }
     }
@@ -124,7 +129,7 @@ class _MyQuestionPageState extends State<QuestionPage> {
           ),
           hasLeft: hasLeft,
           context: context,
-          navigatorRoute: "/AsynchorousPage",
+          navigatorRoute: "/GalleryPage",
           hasRight: true,
           color: Colors.red[700],
         ),
@@ -145,7 +150,17 @@ class _MyQuestionPageState extends State<QuestionPage> {
                         if (position == _questionList.length && position != 0) {
                           return LoadingProgress(isLoading: isLoading);
                         } else if (position < _questionList.length) {
-                          return _gestureDetector(position);
+                          return AnimatedBuilder(
+                            animation: _controller,
+                            child: _gestureDetector(position),
+                            builder: (BuildContext context, Widget child) {
+                              return Container(
+                                width: _controller.value,
+                                height: _controller.value,
+                                child: child,
+                              );
+                            },
+                          );
                         }
                       },
                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/widgets/CustomTextFieldLogin.dart';
 import 'ultils/ValidateInput.dart';
 
@@ -9,10 +10,23 @@ class LoginPage extends StatefulWidget {
   _MyLoginPageState createState() => _MyLoginPageState();
 }
 
-class _MyLoginPageState extends State<LoginPage> {
+class _MyLoginPageState extends State<LoginPage>
+    with TickerProviderStateMixin<LoginPage> {
   final _tfEmailController = TextEditingController();
   final _tfPassController = TextEditingController();
+  AnimationController _controller;
   String _errorTextEmail, _errorTextPass;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        value: 150, lowerBound: 0, upperBound: 150.0, vsync: this);
+    Future.delayed(Duration(seconds: 1)).then((v) {
+      _controller.animateTo(0,
+          curve: Curves.bounceInOut, duration: Duration(seconds: 1));
+    });
+  }
 
   @override
   void dispose() {
@@ -27,15 +41,29 @@ class _MyLoginPageState extends State<LoginPage> {
       backgroundColor: Colors.lightBlue[50],
       body: new GestureDetector(
         onTap: () {
-          FocusScope.of(context).detach();
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          _controller.animateTo(150,
+              curve: Curves.bounceIn, duration: Duration(seconds: 1));
         },
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              Container(
+              Padding(
                 padding: const EdgeInsets.only(top: 150),
-                child: Image.asset('lib/images/flutter-icon.png',
-                    width: 100, height: 100),
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  child: Container(
+                    child: Image.asset('lib/images/flutter-icon.png',
+                        fit: BoxFit.fill),
+                  ),
+                  builder: (BuildContext context, Widget child) {
+                    return Container(
+                      width: _controller.value,
+                      height: _controller.value,
+                      child: child,
+                    );
+                  },
+                ),
               ),
               Container(
                 margin: const EdgeInsets.only(top: 30),
@@ -88,8 +116,8 @@ class _MyLoginPageState extends State<LoginPage> {
                       setState(() {
                         if (ValidateInput.checkFinalValidate(
                             _tfEmailController.text, _tfPassController.text)) {
-                          Navigator.pushReplacementNamed(
-                              context, '/ImageLoadPage');
+                          Navigator.pushNamed(
+                              context, '/QuestionPage');
                         } else {
                           _errorTextEmail = ValidateInput.validateEmail(
                               _tfEmailController.text);
