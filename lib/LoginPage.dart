@@ -27,7 +27,7 @@ class _MyLoginPageState extends State<LoginPage> {
       backgroundColor: Colors.lightBlue[50],
       body: new GestureDetector(
         onTap: () {
-          FocusScope.of(context).detach();
+
         },
         child: SingleChildScrollView(
           child: Column(

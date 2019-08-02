@@ -33,6 +33,7 @@ dependencies:
   path_provider: ^0.5.0
   permission_handler: ^3.0.1
   geolocator: ^4.0.3
+  agora_rtc_engine: ^0.9.8
 dev_dependencies:
   flutter_test:
     sdk: flutter
