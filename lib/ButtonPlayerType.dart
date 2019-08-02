@@ -1,0 +1,1 @@
+enum ButtonPlayerType { PREVIOUS, NEXT, PLAY, PAUSE, STOP }
