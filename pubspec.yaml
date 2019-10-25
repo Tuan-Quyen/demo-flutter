@@ -14,25 +14,20 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.12.0+2
-  intl: ^0.15.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  build_runner: ^1.0.0
-  image_picker: ^0.6.0+3
-  flutter_advanced_networkimage: ^0.4.15
+  provider: ^3.1.0
+  flutter_slidable: ^0.5.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  english_words: ^3.1.0
-  json_serializable: ^2.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
@@ -45,13 +40,6 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-  - lib/images/butterfly-icon.png
-  - lib/images/flutter-icon.png
-  - lib/images/ic_vote.png
-  - lib/images/ic_answers_non_zero.png
-  - lib/images/ic_no_answers.png
-  - lib/images/ic_answers_accepted.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

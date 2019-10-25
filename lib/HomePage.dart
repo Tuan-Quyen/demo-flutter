@@ -10,7 +10,7 @@ class _MyHomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Push Notification"),
+        title: Text("Home Page"),
         backgroundColor: Colors.lightBlue,
       ),
       body: Container(),

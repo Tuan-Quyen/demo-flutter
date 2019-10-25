@@ -4,11 +4,9 @@ import 'package:flutter/services.dart';
 import 'HomePage.dart';
 
 void main() {
-  SystemChrome.setPreferredOrientations(
-      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
-    runApp(MyApp());
-  });
+  runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
@@ -18,7 +16,6 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: HomePage()
-    );
+        home: HomePage());
   }
 }
