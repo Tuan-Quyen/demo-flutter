@@ -30,14 +30,19 @@ class _SecondPageProviderState extends State<SecondPageProvider> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              counterBloc.valueCounter.toString() +
-                  counterBloc.valueMath +
-                  counterBloc.valueChange.toString(),
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
+            StreamBuilder(
+              stream: counterBloc.valueCounter,
+              builder: (context, snapshot) {
+                return Text(
+                  snapshot.data.toString() +
+                      counterBloc.valueMath +
+                      counterBloc.valueChange.toString(),
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
             ),
             RaisedButton(
               child: Text(

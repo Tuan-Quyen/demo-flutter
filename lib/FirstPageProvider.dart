@@ -42,12 +42,18 @@ class FirstPageProviderState extends State<FirstPageProvider> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(
-              counterBloc.valueCounter.toString(),
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
+            StreamBuilder(
+              initialData: 0,
+              stream: counterBloc.valueCounter,
+              builder: (context, snapshot) {
+                return Text(
+                  snapshot.data.toString(),
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
             ),
             RaisedButton(
               child: Text(

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class CounterBloc extends ChangeNotifier {
   List<String> _counterList = new List();
-  int _counter = 0, _valueChange = 0;
+  int _valueChange = 0;
   String _math = "+";
 
-  int get valueCounter => _counter;
+  final BehaviorSubject<int> _valueCounter = BehaviorSubject();
+
+  BehaviorSubject<int> get valueCounter => _valueCounter;
 
   int get valueChange => _valueChange;
 
@@ -15,33 +18,37 @@ class CounterBloc extends ChangeNotifier {
 
   raiseValue() {
     Future.delayed(Duration(seconds: 2)).then((v) {
-      _counter = 20;
+      valueCounter.sink.add(20);
       print(valueCounter);
       notifyListeners();
     });
   }
 
   increaseValue() {
-    int temp = _counter;
-    _counter = valueCounter + _valueChange;
+    int temp = valueCounter.value;
+    valueCounter.value = valueCounter.value + _valueChange;
     _math = "+";
     _counterList.add(temp.toString() +
-        _math + _valueChange.toString() +
+        _math +
+        _valueChange.toString() +
         "=" +
-        _counter.toString() );
+        valueCounter.value.toString());
+    valueCounter.sink.add(valueCounter.value);
     print(_counterList.toString());
     notifyListeners();
   }
 
   decreaseValue() {
-    int temp = _counter;
-    _counter = valueCounter - _valueChange;
+    int temp = valueCounter.value;
+    valueCounter.value = valueCounter.value - _valueChange;
     _math = "-";
     _counterList.add(temp.toString() +
-        _math + _valueChange.toString() +
+        _math +
+        _valueChange.toString() +
         "=" +
-        _counter.toString() );
+        valueCounter.value.toString());
     print(_counterList.toString());
+    valueCounter.sink.add(valueCounter.value);
     notifyListeners();
   }
 
@@ -50,7 +57,7 @@ class CounterBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  removeItem(int position){
+  removeItem(int position) {
     _counterList.removeAt(position);
     notifyListeners();
   }
