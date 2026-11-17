@@ -1,16 +1,29 @@
-# flutter_app
+# demo-flutter
 
-A new Flutter application.
+> 🗄️ **2019 learning project, no longer maintained.** One of my first Flutter experiments. Kept for history.
 
-## Getting Started
+A minimal Flutter starter I set up in 2019 while moving from native Android to Flutter. It contains the app shell (`MaterialApp` → `HomePage`) and the dependencies I was evaluating at the time:
 
-This project is a starting point for a Flutter application.
+| Package | Why it was here |
+|---|---|
+| `provider` | Trying state management before settling on BLoC in later projects |
+| `flutter_slidable` | Swipe actions on list items |
 
-A few resources to get you started if this is your first Flutter project:
+**Stack:** Flutter (Dart 2, 2019), Android + iOS runners
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+## Run
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+Built against a 2019 Flutter SDK. On a current SDK you will need to upgrade the Android Gradle setup and dependencies first.
+
+```bash
+flutter pub get
+flutter run
+```
+
+## Where this led
+
+My production Flutter work since then uses BLoC, Clean Architecture, GetIt, Dio + Retrofit codegen and bloc_test. See my [portfolio](https://quyenchau.pages.dev) or [qcsocial](https://github.com/Tuan-Quyen/qcsocial) for a fuller example.
+
+---
+
+**Quyen Chau** · [Portfolio & CV](https://quyenchau.pages.dev) · [GitHub](https://github.com/Tuan-Quyen)
